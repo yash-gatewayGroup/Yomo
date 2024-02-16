@@ -6,7 +6,6 @@ import TextBoxComponent from "../../components/TextBox/TextBox";
 import LoginButtonComponent from "../../components/Button/Button";
 import TopPageNumber from "../../components/TopPageNumber/TopPageNumber";
 import { db, storage, newTimestamp } from "../../firebase";
-import ImageUploader from "react-images-upload";
 import { useNavigate } from "react-router-dom";
 import firebase from "firebase/compat/app";
 import { CircularProgress } from "@mui/material";
@@ -16,25 +15,26 @@ const WelcomeScreen: React.FC = () => {
   const [customerName, setCustomerName] = useState<string>("");
   const [customerBio, setCustomerBio] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | undefined >(undefined);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
 
   const handleClearImage = () => {
     setImage(null);
-    setImageUrl(null);
+    setImageUrl(undefined);
   };
 
-  const handleImageChange = (files: File[], pictures: string[]) => {
+  const handleImageChange = (files: File[]) => {
     setImageLoading(true);
     if (files.length > 0) {
       setImage(files[0]);
       const reader = new FileReader();
+      console.log("imgUrl", reader.result);
+      reader.readAsDataURL(files[0]);
       reader.onload = () => {
         setImageUrl(reader.result as string);
       };
-      reader.readAsDataURL(files[0]);
       setImageLoading(false);
     }
   };
@@ -90,7 +90,7 @@ const WelcomeScreen: React.FC = () => {
         setCustomerName("");
         setCustomerBio("");
         setImage(null);
-        setImageUrl(null);
+        setImageUrl(undefined);
         window.location.reload();
       } catch (error: any) {
         console.error("Error uploading image:", error.message);
@@ -118,22 +118,37 @@ const WelcomeScreen: React.FC = () => {
           </div>
           <div className="image-upload-section">
             {!imageUrl ? (
-              <ImageUploader
-                onChange={handleImageChange}
-                withIcon={true}
-                className="circular-image-upload"
-                imgExtension={[".jpg", ".jpeg", ".png", ".gif"]}
-                maxFileSize={5242880}
-                buttonText={"Upload Image"}
-                style={{
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  width: "30vh",
-                  height: "20vh",
-                  border: "2px dashed #666",
-                }}
-              />
-            ) : imageLoading ? (
+              <label>
+                <img src={imageUrl} className="circular-image-upload"/>
+                <p>Upload</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{
+                    display: "none",
+                  }}
+                  onChange={(e:any)=>{
+                    console.log("image", e.target.files);
+                    handleImageChange(e.target.files)
+                  }}
+                />
+              </label>
+            ) : // <ImageUploader
+            //   onChange={handleImageChange}
+            //   withIcon={true}
+            //   className="circular-image-upload"
+            //   imgExtension={[".jpg", ".jpeg", ".png", ".gif"]}
+            //   maxFileSize={5242880}
+            //   buttonText={"Upload Image"}
+            //   style={{
+            //     borderRadius: "50%",
+            //     overflow: "hidden",
+            //     width: "30vh",
+            //     height: "20vh",
+            //     border: "2px dashed #666",
+            //   }}
+            // />
+            imageLoading ? (
               <CircularProgress />
             ) : (
               <div
