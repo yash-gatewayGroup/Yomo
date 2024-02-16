@@ -1,0 +1,217 @@
+
+.profile-picture {
+  max-height: 20%;
+  max-width: 7vh;
+  border-radius: 50%;
+}
+
+.details {
+  width: 100%;
+  margin: 0;
+  height: auto;
+}
+
+.icon {
+  width: 8vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+
+.additional-settings{
+  padding-top: 10;
+  width: "100%";
+  display: "flex";
+  flex-direction: "column";
+}
+
+.account-settings,
+.blocked-users,
+.help {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.account-settings p,
+.blocked-users p,
+.help p {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.settings-icon,
+.block-icon,
+.help-icon {
+  padding: 10px;
+}
+
+.loading-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Blocked User Css*/
+
+.blocked-user-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.blocked-user-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+  position: relative;
+}
+
+.profile-pic-container {
+  position: relative; 
+  width: 80px;
+  height: 6vh;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-pic {
+  width: 100%;
+  height: 80%;
+  object-fit: cover;
+}
+
+.user-details {
+  margin-left: 10px;
+  width: 90%;
+  justify-content: center;
+}
+
+.user-name {
+  margin: 0;
+  font-weight: bold;
+  max-lines: 1;
+}
+
+.unblock-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #a18080;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.status-dot {
+  position: absolute;
+  top: 74%; 
+  left: 84%; 
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-dot.green {
+  background-color: green;
+}
+
+.status-dot.red {
+  background-color: red;
+}
+
+/* Profile Detail Screen Css*/
+
+.image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-wrapper img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropzone-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dropzone-container1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.dropzone-text {
+  margin-top: 10px;
+}
+
+.textBox-container {
+  margin-bottom: 40px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-button-container {
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+

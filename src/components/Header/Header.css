@@ -1,0 +1,16 @@
+.header {
+    background-color: #030104;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .left-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .right-section {
+    display: flex;
+    align-items: center;
+  }

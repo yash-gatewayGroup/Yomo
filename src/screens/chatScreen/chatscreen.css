@@ -1,0 +1,84 @@
+.chat-user-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+}
+
+.chat-user-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 8vh;
+  position: relative;
+}
+
+.chat-profile-pic-container {
+  position: relative;
+  width: 8vh;
+  height: 6vh;
+  border-radius: 50%;
+  overflow: hidden;
+  max-width: 9vh;
+}
+
+.profile-pic {
+  width: 100%;
+  height: 80%;
+  object-fit: cover;
+}
+
+.user-details {
+  margin-left: 10px;
+  width: 90%;
+  display: "flex";
+  justify-content: "space-between";
+  height: 3vh;
+  flex-direction: row;
+}
+
+.user-details-container {
+  width: 100%;
+  flex-direction: row;
+  max-width: 100%;
+  padding: 10px;
+}
+
+.user-details-row {
+  display: flex;
+  justify-content: space-between;
+  height: 3vh;
+}
+
+.user-name {
+  font-weight: bold;
+  max-lines: 1;
+  margin: 0;
+}
+
+.user-last-message {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 80%;
+}
+
+.green-circle {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: green;
+  color: white;
+  text-align: center;
+  font-size: 12px;
+}
+
+.minutes-ago {
+  margin: 0;
+  font-size: 14px;
+}

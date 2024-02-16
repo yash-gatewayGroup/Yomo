@@ -1,0 +1,57 @@
+.connection-user-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .connection-user-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    position: relative;
+  }
+  
+  .profile-pic-container {
+    position: relative; 
+    width: 80px;
+    height: 10vh;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .user-details {
+    width: 90%;
+    justify-content: center;
+  }
+  
+  .user-name {
+    margin: 0;
+    font-weight: bold;
+    max-lines: 1;
+  }
+  
+  .status-dot {
+    position: absolute;
+    top: 74%; 
+    left: 84%; 
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .withdraw-button {
+    padding: 3px 8px;
+    border: none;
+    border-radius: 5px;
+    background-color: #827e7e;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
