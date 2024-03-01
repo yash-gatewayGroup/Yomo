@@ -1,57 +1,103 @@
 .connection-user-list {
-    flex-direction: column;
-    align-items: center;
-  }
+  flex-direction: column;
+  align-items: center;
+}
 
-  .connection-user-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    width: 100%;
-    position: relative;
-  }
-  
-  .profile-pic-container {
-    position: relative; 
-    width: 80px;
-    height: 10vh;
-    border-radius: 50%;
-    overflow: hidden;
-  }
+.connection-user-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+}
 
-  .profile-pic {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+.profile-pic-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 
-  .user-details {
-    width: 90%;
-    justify-content: center;
-  }
-  
-  .user-name {
-    margin: 0;
-    font-weight: bold;
-    max-lines: 1;
-  }
-  
-  .status-dot {
-    position: absolute;
-    top: 74%; 
-    left: 84%; 
-    transform: translate(-50%, -50%);
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
+.profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-  .withdraw-button {
-    padding: 3px 8px;
-    border: none;
-    border-radius: 5px;
-    background-color: #827e7e;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-  }
+.userdetails {
+  width: 80%;
+  padding-inline-start: 3%;
+  font-weight: 400;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: "Public Sans";
+}
+
+.user-name {
+  margin: 0;
+  font-weight: bold;
+  max-lines: 1;
+}
+
+.statusdot {
+  position: absolute;
+  top: 83%;
+  left: 83%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.withdraw-button {
+  border: none;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-weight: 700px;
+  cursor: pointer;
+  font-size: 12px;
+  height: 3vh;
+  width: 10vh;
+  border-radius: 8px;
+  font-family: "Public Sans";
+}
+
+.MuiTabPanel-root.css-13xfq8m-MuiTabPanel-root {
+  padding: 0% !important;
+}
+
+.MuiTabs-flexContainer.css-heg063-MuiTabs-flexContainer {
+  padding-top: 16px;
+}
+.MuiButtonBase-root.MuiTab-root.MuiTab-textColorPrimary.css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
+  text-transform: none;
+}
+
+.received-box {
+  margin-left: 5;
+  width: 22px;
+  height: 20px;
+  background-color: #2e2e2e;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  font-weight: "bold";
+  font-size: 12px;
+  font-family: "Public Sans";
+}
+
+.tab-text {
+  color: #ffffff;
+  font-weight: 400px;
+  font-size: 14px;
+  font-family: "Public Sans";
+}
+
+.main-received-box {
+  display: flex;
+  align-items: center;
+}
+
+.tab-container {
+  background-color: #000000;
+  height: 100%;
+}

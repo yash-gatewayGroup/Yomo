@@ -61,7 +61,7 @@ const ChatScreen = () => {
           </div>
         ))}
       </div>
-      <BottomNav screenValue="chats" />
+      <BottomNav screenValue="chats"/>
     </>
   );
 };

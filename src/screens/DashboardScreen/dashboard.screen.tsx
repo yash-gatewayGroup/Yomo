@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 const DashboardScreen: React.FC = () => {
   return (
     <div>
-    {<Navigate to="/chats" />}
+    {<Navigate to="/location" />}
     </div>
   );
 };

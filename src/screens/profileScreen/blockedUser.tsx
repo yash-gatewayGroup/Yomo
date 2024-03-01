@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import "./profile.css";
 import { db } from "../../firebase";
+import { CircularProgress } from "@mui/material";
+import Card from "../../components/Cards/Card";
+import "./profile.css";
+import { doc, onSnapshot } from "firebase/firestore";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface CustomerData {
   id: string;
@@ -11,138 +17,111 @@ interface CustomerData {
   status: string;
   collectionId: string;
   documentId?: string;
+  customerId: string;
+  friendRequestId: string;
 }
 
 const Blockeduser = () => {
   const [blockedUsers, setBlockedUsers] = useState<CustomerData[]>([]);
   const id: string | null = localStorage.getItem("databaseId");
-
-  const handleUnblockUser = (documentId: any) => {
-    id ? removeFromBlockedIds(id, documentId) : console.log("No id found");
-  };
-
-  const removeFromBlockedIds = async (userId: string, idToRemove: string) => {
-    try {
-      const userRef = db.collection("customersData").doc(userId);
-      const userSnapshot = await userRef.get();
-
-      if (userSnapshot.exists) {
-        const userData = userSnapshot.data();
-        const existingIds = userData?.blockedIds || [];
-        const updatedBlockedIds = existingIds.filter(
-          (existingId: any) => existingId !== idToRemove
-        );
-        await userRef.update({
-          blockedIds: updatedBlockedIds,
-        });
-        console.log(
-          `ID ${idToRemove} removed from the blockedIds array in document ${userId}`
-        );
-        window.location.reload();
-      } else {
-        console.log(
-          `Document with ID ${userId} does not exist in the collection.`
-        );
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error(`Error removing ${idToRemove} from blockedIds:`, error);
-    }
-  };
+  const [loading, setLoading] = useState(false);
+  const [isSavingData, setIsSavingData] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchBlockedIds();
+    if (id) {
+      setLoading(true);
+      const q = doc(db, "customersData", id);
+      const unsub = onSnapshot(q, async (snapshot) => {
+        const data = snapshot.data();
+        const acceptedIdsArray = data?.blockedIds;
+        if (acceptedIdsArray) {
+          const getBlockedUserData = await getCustomerDataByIds(acceptedIdsArray);
+          setBlockedUsers(getBlockedUserData);
+        } else {
+          setBlockedUsers([]);
+        }
+        setLoading(false);
+      });
+
+      return () => {
+        unsub();
+      };
+    } else {
+      console.log("No database ID found.");
+    }
   }, []);
 
-  const fetchBlockedIds = async () => {
+  const getCustomerDataByIds = async (userBlockedsIds: string[]) => {
     try {
-      const id: string | null = localStorage.getItem("databaseId");
-      if (id) {
-        const snapshot = await db.collection("customersData").doc(id).get();
-        if (snapshot.exists) {
-          const data = snapshot.data();
-          if (data && data.blockedIds) {
-            const acceptedIdsArray = data.blockedIds;
-            getCustomerDataByIds(acceptedIdsArray)
-              .then((customerData) => {
-                setBlockedUsers(customerData);
-                console.log("Customer data:", customerData);
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-              });
-            console.log("Accepted IDs:", acceptedIdsArray);
-          } else {
-            console.log("Accepted IDs field does not exist or is empty.");
-          }
-        } else {
-          console.log("Document does not exist.");
-        }
-      } else {
-        console.log("No database ID found.");
+      const customerDataPromises: Promise<CustomerData>[] = [];
+      for (const customerId of userBlockedsIds) {
+        const docRef = doc(db, "customersData", customerId);
+        const promise = new Promise<CustomerData>((resolve, reject) => {
+          onSnapshot(
+            docRef,
+            (snapshot) => {
+              const data = snapshot.data() as CustomerData;
+              const newData = { ...data, customerId: snapshot.id };
+              resolve(newData);
+            },
+            reject
+          );
+        });
+        customerDataPromises.push(promise);
       }
+      const resolvedData = await Promise.all(customerDataPromises);
+      return resolvedData;
     } catch (error) {
-      console.error("Error fetching accepted IDs:", error);
+      console.error("Error fetching customer data:", error);
+      return [];
     }
   };
 
-  const getCustomerDataByIds = async (ids: string[]) => {
+  const removeConnectionFromBlock = async (unBlockId: any) => {
+    setIsSavingData(true);
     try {
-      const customerData: CustomerData[] = [];
-      for (const customerId of ids) {
-        const snapshot = await db
-          .collection("customersData")
-          .doc(customerId)
-          .get();
-        if (snapshot.exists) {
-          const data = snapshot.data() as CustomerData;
-          customerData.push({ ...data, documentId: snapshot.id });
-        } else {
-          console.log(`Document with ID ${customerId} does not exist`);
-        }
+      if (id) {
+        const customerDataRef = db.collection("customersData").doc(id);
+        const docSnapshot = await customerDataRef.get();
+        const data = docSnapshot.data();
+        const existingIds = data?.blockedIds || [];
+        const updatedBlockedConnectionIds = existingIds.filter((existingId: any) => existingId !== unBlockId);
+        await customerDataRef.update({
+          blockedIds: updatedBlockedConnectionIds,
+        });
+        setIsSavingData(false);
+        toast.success("successful");
       }
-      return customerData;
-    } catch (error) {
-      console.error("Error getting customer data by IDs:", error);
-      return [];
+    } catch {
+      console.log("Catch Block Executed For Removing Id From the Connection Id");
+      setIsSavingData(false);
     }
   };
 
   return (
     <>
       <Header showBackButton={true} headerName="Blocked Users" />
-      <div className="blocked-user-list">
-        {blockedUsers.map((blocked) => (
-          <div key={blocked.id} className="blocked-user-item">
-            <div className="profile-pic-container">
-              <img
-                src={blocked.imageUrl}
-                alt={blocked.name}
-                className="profile-pic"
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "100%",
-                  objectFit: "contain",
-                }}
-              />
-              <div
-                className={`status-dot ${
-                  blocked.status === "online" ? "green" : "red"
-                }`}
-              ></div>
-            </div>
-            <div className="user-details">
-              <p className="user-name">{blocked.name}</p>
-            </div>
-            <button
-              className="unblock-button"
-              onClick={() => handleUnblockUser(blocked.documentId)}
-            >
-              Unblock
-            </button>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="loading-indicator">
+          <CircularProgress />
+        </div>
+      ) : blockedUsers.length === 0 ? (
+        <div className="block-user-container">
+          <span className="block-text">No block users Found</span>
+        </div>
+      ) : (
+        <div className="block-user-container">
+          {blockedUsers.map((blocked) => (
+            <Card
+              key={blocked.id}
+              customer={blocked}
+              deleteData={() => removeConnectionFromBlock(blocked.customerId)}
+              btnName="Unblock"
+              isSavingData={isSavingData}
+            />
+          ))}
+        </div>
+      )}
     </>
   );
 };

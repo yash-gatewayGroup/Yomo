@@ -1,20 +1,27 @@
-import React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
+import React from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+import { makeStyles } from "@mui/styles";
+import LoginButtonComponent from "../Button/Button";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
   },
-  ref: React.Ref<unknown>,
+  ref: React.Ref<unknown>
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const useStyles = makeStyles({
+  paper: {
+    color: "black",
+  },
 });
 
 interface AlertDialogSlideProps {
@@ -22,33 +29,75 @@ interface AlertDialogSlideProps {
   handleClose: () => void;
   handleLogout: () => void;
   firstMessage: string;
-  secondMessage: string
-  btnone: string,
-  btnsecond: string
+  secondMessage: string;
+  btnone: string;
+  btnsecond: string;
 }
 
-const AlertDialogSlide: React.FC<AlertDialogSlideProps> = ({ open, handleClose, handleLogout, firstMessage, secondMessage, btnone, btnsecond }) => {
+const AlertDialogSlide: React.FC<AlertDialogSlideProps> = ({
+  open,
+  handleClose,
+  handleLogout,
+  firstMessage,
+  secondMessage,
+  btnone,
+  btnsecond,
+}) => {
+  const classes = useStyles();
   return (
     <Dialog
       open={open}
       TransitionComponent={Transition}
       keepMounted
       onClose={handleClose}
-      aria-describedby="alert-dialog-slide-description"
+      classes={{
+        paper: classes.paper,
+      }}
     >
-      <DialogTitle>{firstMessage}</DialogTitle>
+      <DialogTitle
+        style={{ fontFamily: "Public Sans", fontSize: 16, fontWeight: "bold" }}
+      >
+        {firstMessage}
+      </DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-slide-description">
+        <DialogContentText
+          style={{
+            fontFamily: "Public Sans",
+            fontSize: 14,
+            fontWeight: "400",
+            color: "#637381",
+          }}
+        >
           {secondMessage}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          {btnone}
-        </Button>
-        <Button onClick={handleLogout} color="primary" autoFocus>
-          {btnsecond}
-        </Button>
+        <LoginButtonComponent
+          onClick={handleClose}
+          variant="contained"
+          style={{
+            backgroundColor: "#919EAB",
+            color: "#FFFFFF",
+            fontFamily: "Public Sans",
+            fontSize: 14,
+            fontWeight: "400",
+            width: "30%",
+          }}
+          name={btnone}
+        />
+        <LoginButtonComponent
+          onClick={handleLogout}
+          variant="contained"
+          style={{
+            backgroundColor: "#FFFFFF",
+            color: "#000000",
+            fontFamily: "Public Sans",
+            fontSize: 14,
+            fontWeight: "bold",
+            width: "30%",
+          }}
+          name={btnsecond}
+        />
       </DialogActions>
     </Dialog>
   );

@@ -18,26 +18,35 @@ interface UserInfo {
 
 const ProfileScreen = () => {
   const [info, setInfo] = useState<UserInfo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<Boolean>(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const id: any = localStorage.getItem("documentId");    
+    const id: any = localStorage.getItem("databaseId");    
     if (id) {
       fetchData(id);
     }
   }, []);
 
-  const fetchData = (id: any) => {
-    const getFromFirebase = Firebase.firestore().collection("customersData");
-    getFromFirebase.where("id", "==", id).onSnapshot((querySnapShot) => {
-      const saveFirebaseTodos: any = [];
-      querySnapShot.forEach((doc) => {
-        saveFirebaseTodos.push(doc.data());
+  const fetchData = (id: string) => {
+    Firebase.firestore().collection("customersData").doc(id).get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data() as UserInfo | undefined;
+          if (data) {
+            setInfo([data]); 
+          } else {
+            console.log("Document data is undefined for ID:", id);
+          }
+        } else {
+          console.log("No such document found with ID:", id);
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error getting document:", error);
+        setLoading(false);
       });
-      setInfo(saveFirebaseTodos);
-      setLoading(false);
-    });
   };
 
   const handleAction = () => {
@@ -64,27 +73,22 @@ const ProfileScreen = () => {
           <div className="container">
             {info.map((data, index) => (
               <div
-                className="content"
+                className="account-settings"
                 key={index}
                 onClick={handleProfileAction}
               >
-                <div
-                  style={{
-                    width: "auto",
-                    height: "auto",
-                    paddingTop: 5,
-                    padding: 6,
-                  }}
-                >
+           
                   {data.imageUrl ? (
                     <img
                       src={data.imageUrl}
                       alt="Profile"
-                      className="profile-picture"
                       style={{
-                        width: "100%",
-                        height: "100%",
+                        height:"7vh",
+                        width: "7vh",
                         objectFit: "cover",
+                        maxHeight:"10vh",
+                        maxWidth: '7vh',
+                        borderRadius:'50%'
                       }}
                     />
                   ) : (
@@ -96,34 +100,34 @@ const ProfileScreen = () => {
                       }}
                     ></div>
                   )}
-                </div>
                 <div className="details">
-                  <p style={{ fontSize: 18, margin: 0, fontWeight: "bold" }}>
+                  <p style={{ fontSize: 16, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
                     {data.name}
                   </p>
-                  <p style={{ margin: 0, fontSize: 14, maxLines: 2 }}>
+                  <p style={{ margin: 0, fontSize: 14, color:"#637381", fontWeight: "400", fontFamily: 'Public Sans', textOverflow: 'ellipsis', 
+                  overflow:'hidden', whiteSpace: 'nowrap',width:"100%" }}>
                     {data.bio}
                   </p>
                 </div>
-                <div className="icon">
-                  <ArrowForwardIosIcon />
+                <div className="iconforward">
+                  <ArrowForwardIosIcon style={{color:"#FFFFFF"}} />
                 </div>
               </div>
             ))}
             <div className="additional-settings">
               <div className="account-settings" onClick={handleAction}>
                 <div className="settings-icon">
-                  <SettingsIcon />
+                  <SettingsIcon style={{color:"#FFFFFF"}} />
                 </div>
                 <div
-                  style={{ flex: "1", padding: "10px 0", textAlign: "left" }}
+                  style={{ flex: "1", textAlign: "left" }}
                 >
-                  <p style={{ fontSize: 16, fontWeight: "bold", margin: 0 }}>
+                  <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
                     Account settings
                   </p>
                 </div>
-                <div style={{ padding: 10 }}>
-                  <ArrowForwardIosIcon />
+                <div>
+                  <ArrowForwardIosIcon style={{color:"#FFFFFF"}}/>
                 </div>
               </div>
 
@@ -132,17 +136,17 @@ const ProfileScreen = () => {
                 onClick={handleBlockAction}
               >
                 <div style={{ padding: 10 }}>
-                  <BlockIcon />
+                  <BlockIcon style={{color:"#FFFFFF"}} />
                 </div>
                 <div
-                  style={{ flex: "1", padding: "10px 0", textAlign: "left" }}
+                  style={{ flex: "1", textAlign: "left" }}
                 >
-                  <p style={{ fontSize: 16, fontWeight: "bold", margin: 0 }}>
+                  <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
                     Blocked Users
                   </p>
                 </div>
-                <div style={{ padding: 10 }}>
-                  <ArrowForwardIosIcon />
+                <div>
+                  <ArrowForwardIosIcon style={{color:"#FFFFFF"}}/>
                 </div>
               </div>
 
@@ -150,17 +154,14 @@ const ProfileScreen = () => {
                 style={{ display: "flex", alignItems: "center", padding: 8 }}
               >
                 <div style={{ padding: 10 }}>
-                  <HelpOutlineIcon />
+                  <HelpOutlineIcon style={{color:"#FFFFFF"}} />
                 </div>
                 <div
-                  style={{ flex: "1", padding: "10px 0", textAlign: "left" }}
+                  style={{ flex: "1", textAlign: "left" }}
                 >
-                  <p style={{ fontSize: 16, fontWeight: "bold", margin: 0 }}>
+                 <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
                     Help
                   </p>
-                </div>
-                <div style={{ padding: 10 }}>
-                  <ArrowForwardIosIcon />
                 </div>
               </div>
             </div>

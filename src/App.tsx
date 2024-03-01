@@ -14,21 +14,24 @@ import AccountSettingScreen from "./screens/profileScreen/accountSettings";
 import ProfileDetail from "./screens/profileScreen/profileDetails";
 import Blockeduser from "./screens/profileScreen/blockedUser";
 import { db } from "./firebase";
+import InternetConnectivity from "./components/InternetConnectivity/InternetConnectivity";
+import { ToastContainer } from "react-toastify";
+
 const App: React.FC = () => {
   const [userStatus, setUserStatus] = useState<string>("offline");
-  
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const updateUserStatus = () => {
       const userIsOnline = true;
       const userId: string | null = localStorage.getItem("databaseId");
-
       if (userId) {
         const userRef = db.collection("customersData").doc(userId);
         userRef
           .update({
             status: userIsOnline ? "online" : "away",
           })
-          .then(() => console.log("User status updated"))
+          .then(() => {})
           .catch((error: any) =>
             console.error("Error updating user status:", error)
           );
@@ -42,22 +45,38 @@ const App: React.FC = () => {
     return () => clearTimeout(awayTimeout);
   }, []);
 
+
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<SplashScreen />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/otpscreen/:phoneNumber" element={<Otpscreen />} />
-        <Route path="/welcome" element={<WelcomeScreen />} />
-        <Route path="/dashboard" element={<DashboardScreen />} />
-        <Route path="/accountSettings" element={<AccountSettingScreen />} />
-        <Route path="/chats" element={<ChatScreen />} />
-        <Route path="/connection" element={<ConnectionScreen />} />
-        <Route path="/location" element={<LocationScreen />} />
-        <Route path="/profile" element={<ProfileScreen />} />
-        <Route path="/profileDetails" element={<ProfileDetail />} />
-        <Route path="/blockeduser" element={<Blockeduser />} />
-      </Routes>
+      {/* <Header /> */}
+      <div style={{ flexGrow: 1 }}>
+        <InternetConnectivity />
+        <Routes>
+          <Route path="/" element={<SplashScreen />} />
+          <Route
+            path="/login"
+            element={token!== 'null' ? <Login /> : <DashboardScreen />}
+          />
+          <Route
+            path="/otpscreen/:phoneNumber"
+            element={token!== 'null' ? <Otpscreen /> : <DashboardScreen />}
+          />
+          <Route
+            path="/welcome"
+            element={<WelcomeScreen />}
+          />
+          <Route path="/dashboard" element={<DashboardScreen />} />
+          <Route path="/accountSettings" element={<AccountSettingScreen />} />
+          <Route path="/chats" element={<ChatScreen />} />
+          <Route path="/connection" element={<ConnectionScreen />} />
+          <Route path="/location" element={<LocationScreen />} />
+          <Route path="/profile" element={<ProfileScreen />} />
+          <Route path="/profileDetails" element={<ProfileDetail />} />
+          <Route path="/blockeduser" element={<Blockeduser />} />
+        </Routes>
+        <ToastContainer />
+      </div>
+      {/* <BottomNav /> */}
     </Router>
   );
 };

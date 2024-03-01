@@ -1,0 +1,13 @@
+/* InternetConnectivity.css */
+.internet-disconnected-popup {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1A1A1A;
+    color: #fff;
+    width: auto;
+    border-radius: 5px;
+    width: 70%;
+  }
+  

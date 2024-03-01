@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   GoogleMap,
   GoogleMapProps,
-  useLoadScript,
+  useJsApiLoader 
 } from "@react-google-maps/api";
 
 const options = {
@@ -21,8 +21,9 @@ type MapProps = React.PropsWithChildren<{
 
 export default function Map(props: MapProps) {
   const { setMap, onZoomChanged, children } = props;
-  const { isLoaded, loadError } = useLoadScript({
+  const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyBsk8fe2yngY-Nz5su1YrOLUneiYcYXSms",
+    id: 'google-map-script',
   });
 
   const [defaultCenter, setDefaultCenter] = useState({ lat: 0, lng: 0 });
@@ -51,10 +52,9 @@ export default function Map(props: MapProps) {
             mapContainerStyle={{
               height: "100vh",
               width: "100%",
-              maxWidth: "220vh",
-              maxHeight: "100vh",
+          
             }}
-            zoom={2}
+            zoom={8}
             center={defaultCenter}
             options={options}
             onLoad={loadHandler}

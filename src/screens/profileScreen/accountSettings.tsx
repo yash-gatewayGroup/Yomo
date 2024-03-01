@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React,{ useState } from "react";
 import "./profile.css";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -27,9 +27,10 @@ const AccountSettingScreen = () => {
 
   const handleLogout = () => {
     setIsDialogOpen(false);
-    localStorage.removeItem('User');
+    localStorage.removeItem('token');
+    localStorage.removeItem('databaseId');
     navigate('/login')
-    window.location.reload();
+    window.location.reload()
   };
 
   const deleteAccount = async ()=>{
@@ -42,10 +43,10 @@ const AccountSettingScreen = () => {
       <div className="additional-settings">
         <div className="account-settings" onClick={handleOpenDialog}>
           <div className="settings-icon">
-            <LogoutIcon />
+            <LogoutIcon style={{color: "#FFFFFF"}}/>
           </div>
           <div style={{ flex: "1", padding: "10px 0", textAlign: "left" }}>
-            <p style={{ fontSize: 16, fontWeight: "bold", margin: 0 }}>
+          <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
               Logout
             </p>
           </div>
@@ -57,10 +58,10 @@ const AccountSettingScreen = () => {
 
         <div style={{ display: "flex", alignItems: "center", padding: 8 }}>
           <div style={{ padding: 10 }}>
-            <DescriptionOutlinedIcon />
+            <DescriptionOutlinedIcon style={{color: "#FFFFFF"}} />
           </div>
           <div style={{ flex: "1", padding: "10px 0", textAlign: "left" }}>
-            <p style={{ fontSize: 16, fontWeight: "bold", margin: 0 }}>
+          <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
               Privacy & Terms
             </p>
           </div>
@@ -68,10 +69,10 @@ const AccountSettingScreen = () => {
 
         <div style={{ display: "flex", alignItems: "center", padding: 8 }}  onClick={handleDeleteOpenDialog}>
           <div style={{ padding: 10 }}>
-            <DeleteIcon />
+            <DeleteIcon style={{color: "#FFFFFF"}}/>
           </div>
           <div style={{ flex: "1", padding: "10px 0", textAlign: "left" }}>
-            <p style={{ fontSize: 16, fontWeight: "bold", margin: 0 }}>
+          <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
               Delete Account
             </p>
           </div>

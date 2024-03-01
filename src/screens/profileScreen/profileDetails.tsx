@@ -1,12 +1,12 @@
-import React, { useEffect, useState, ChangeEventHandler } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import Firebase from "firebase/compat/app";
 import TextBoxComponent from "../../components/TextBox/TextBox";
 import LoginButtonComponent from "../../components/Button/Button";
 import { db, newTimestamp, storage } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import Dropzone from "react-dropzone";
 import { CircularProgress } from "@mui/material";
+import PhotoCameraRoundedIcon from "@mui/icons-material/PhotoCameraRounded";
 
 interface UserInfo {
   bio: string;
@@ -18,11 +18,14 @@ const ProfileDetail = () => {
   const [info, setInfo] = useState<UserInfo[]>([]);
   const [customerName, setCustomerName] = useState<string>("");
   const [customerBio, setCustomerBio] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const [image, setImage] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const id: any = localStorage.getItem("documentId");
+    const id: any = localStorage.getItem("databaseId");
     if (id) {
       fetchData(id);
     }
@@ -35,7 +38,20 @@ const ProfileDetail = () => {
     }
   }, [info]);
 
+  const handleImageChange = (files: File[]) => {
+    if (files.length > 0) {
+      setImage(files[0]);
+      const reader = new FileReader();
+      reader.readAsDataURL(files[0]);
+      reader.onload = () => {
+        setImageUrl(reader.result as string);
+      };
+      handleImageUpload();
+    }
+  };
+
   const updateUser = async () => {
+    setIsLoading(true);
     const id: any = localStorage.getItem("databaseId");
     db.collection("customersData")
       .doc(id)
@@ -45,84 +61,102 @@ const ProfileDetail = () => {
         timeStamp: newTimestamp,
       })
       .then((res) => {
-        console.log("Res", res);
         navigate(-1);
+        setIsLoading(false);
       })
       .catch((err: any) => {
         console.log("Error", err);
+        setIsLoading(false);
       });
   };
 
-  const fetchData = (id: any) => {
-    const getFromFirebase = Firebase.firestore().collection("customersData");
-    getFromFirebase.where("id", "==", id).onSnapshot((querySnapShot) => {
-      const saveFirebaseTodos: any = [];
-      querySnapShot.forEach((doc) => {
-        saveFirebaseTodos.push(doc.data());
+  const fetchData = (id: string) => {
+    setIsLoading(true)
+    Firebase.firestore()
+      .collection("customersData")
+      .doc(id)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data() as UserInfo | undefined;
+          if (data) {
+            setInfo([data]);
+            setIsLoading(false)
+          } else {
+            console.log("Document data is undefined for ID:", id);
+            setIsLoading(false)
+          }
+        } else {
+          console.log("No such document found with ID:", id);
+          setIsLoading(false)
+        }
+      })
+      .catch((error) => {
+        console.error("Error getting document:", error);
+        setIsLoading(false)
       });
-      setInfo(saveFirebaseTodos);
-    });
   };
 
-  const handleDrop = async (image: any) => {
-    const file = image[0];
-
-    const handleImageUpload = async () => {
-      if (!image) {
-        console.error("No image selected.");
-      } else {
-        const id: any = localStorage.getItem("databaseId");
-        const filename = file.name;
-        const storageRef = storage.ref(`images/${filename}`);
-        const metadata = {
-          contentType: "image/png",
-        };
-        const uploadTask = storageRef.put(file, metadata);
-        uploadTask.on("state_changed", (snapshot: any) => {
-          console.log("snapshot", snapshot);
+  const handleImageUpload = async () => {
+    if (!image) {
+      console.error("No image selected.");
+    } else {
+      const storageRef = storage.ref(`images/${image.name}`);
+      const uploadTask = storageRef.put(image);
+      uploadTask.on("state_changed", (snapshot: any) => {
+        console.log("snapshot", snapshot);
+      });
+      await uploadTask;
+      const imageUrl = await storageRef.getDownloadURL();
+      const id: any = localStorage.getItem("databaseId");
+      db.collection("customersData")
+        .doc(id)
+        .update({
+          imageUrl: imageUrl,
+        })
+        .then((res) => {
+          console.log("Upload Res Succefully", res);
         });
-        await uploadTask;
-        const imageUrl = await storageRef.getDownloadURL();
-        db.collection("customersData")
-          .doc(id)
-          .update({
-            imageUrl: imageUrl,
-          })
-          .then((res) => {
-            console.log("Res", res);
-          });
-      }
-    };
-    handleImageUpload();
+    }
   };
 
   return (
     <>
       <Header showBackButton={true} headerName="My Profile Details" />
+      {isLoading && (
+        <div className="loading-indicator">
+          <CircularProgress />
+        </div>
+      )}
       {info.map((data, index) => (
-        <div key={index} className="image-container">
+        <div key={index} className="image-container-profile-detail">
           <div className="image-wrapper">
             {data.imageUrl ? (
-              <img src={data.imageUrl} className="image-wrapper img" />
+              <div className="image-overlay">
+                <img src={data.imageUrl} className="image-wrapper img" />
+                <div className="overlay-content">
+                  <label>
+                    <PhotoCameraRoundedIcon className="overlay-image" />
+                    <div className="overlay-text">Update photo</div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{
+                        display: "none",
+                      }}
+                      onChange={(e: any) => {
+                        console.log("image", e.target.files);
+                        handleImageChange(e.target.files);
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
             ) : (
               <div className="image-placeholder">
                 <CircularProgress />
               </div>
             )}
-
-            <div className="dropzone-container">
-              <Dropzone onDrop={handleDrop}>
-                {({ getRootProps, getInputProps }) => (
-                  <div {...getRootProps()} className="dropzone-container1" >
-                    <input
-                      {...getInputProps()}
-                      accept=".jpg , .jpeg , .png , .gif ,image/*"
-                    />
-                    <p className="dropzone-text" >Click or drag & drop to Update a new image</p>
-                  </div>
-                )}
-              </Dropzone>
-            </div>
           </div>
 
           <div className="textBox-container">
@@ -133,10 +167,7 @@ const ProfileDetail = () => {
               variant="outlined"
               fullWidth
               style={{
-                backgroundColor: "white",
-                borderRadius: "8px",
-                width: "89%",
-                fontSize: 16,
+                width: "90%",
               }}
               multiline={false}
               rows={0}
@@ -148,24 +179,15 @@ const ProfileDetail = () => {
               variant="outlined"
               fullWidth
               style={{
-                backgroundColor: "white",
-                borderRadius: "8px",
-                width: "89%",
-                fontSize: 16,
+                width: "90%",
               }}
               placeholder={"Describe yourself in few Words"}
               multiline={true}
-              rows={5}
+              rows={3}
             />
-          </div>
-
-          <div className="login-button-container">
-            <LoginButtonComponent
-              onClick={updateUser}
-              name="save"
-              variant="contained"
-              style={{ width: "100%", height: "30%" }}
-            />
+            <div className="login-button-container">
+              <LoginButtonComponent variant="contained" onClick={updateUser} name="Update"/>
+            </div>
           </div>
         </div>
       ))}

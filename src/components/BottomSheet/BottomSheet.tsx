@@ -1,16 +1,48 @@
-import React from "react";
-import CancelIcon from "@mui/icons-material/Cancel";
+import React, { useState } from "react";
+import "@fontsource/public-sans";
+import Drawer from "@mui/material/Drawer";
+import LoginButtonComponent from "../Button/Button";
+import firebase from "firebase/compat/app";
+import { CircularProgress } from "@mui/material";
 
 interface BottomSheetProps {
-  id: string | undefined | number;
+  id: string | undefined | null;
   name: string | undefined;
   bio: string | undefined | null;
   onButtonClick: (id: any) => void;
   image: string | undefined;
   visible: boolean;
-  onClose: () => void;
+  onClose?: () => void;
+  isSaving?: Boolean;
 }
 
+interface Data {
+  pendingIds: string[];
+}
+
+const pending = async (documentId: any, idToCheck: any) => {
+  try {
+    const doc = await firebase
+      .firestore()
+      .collection("customersData")
+      .doc(documentId)
+      .get();
+    if (doc.exists) {
+      const documentData = doc.data() as Data;
+      const isIdPresent = documentData.pendingIds.includes(idToCheck);
+      console.log(
+        `ID ${idToCheck} is${isIdPresent ? "" : " not"} present in pendingIds.`
+      );
+      return isIdPresent;
+    } else {
+      console.log("No document found with the provided ID.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    return false;
+  }
+};
 const BottomSheet: React.FC<BottomSheetProps> = ({
   id,
   name,
@@ -19,88 +51,102 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   image,
   visible,
   onClose,
+  isSaving,
 }) => {
+  const [ispending, setIsPending] = useState<Boolean>(false);
+  const userId: string | null = localStorage.getItem("databaseId");
+
+  if (id && userId) {
+    pending(userId, id)
+      .then((res) => {
+        setIsPending(res);
+        console.log("checkiPending res", res);
+      })
+      .catch((err: any) => {
+        console.log("error from catch block of pending", err);
+      });
+  } else {
+    return null;
+  }
+
   return (
-    <>
-      {visible && (
+    <Drawer
+      anchor="bottom"
+      open={visible}
+      onClose={onClose}
+      SlideProps={{
+        style: {
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+          height: "70vh",
+          backgroundColor: "#000000",
+        },
+      }}
+      // sx={{ borderRadius: "25px", borderTopRightRadius: "25px" }}
+      // variant="temporary"
+    >
+      <>
+        <img
+          src={image}
+          alt="Profile"
+          style={{
+            objectFit: "cover",
+            width: "100%",
+            height: "65%",
+          }}
+        />
         <div
           style={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: "#c0c0c0",
-            height: "60%",
-            borderTopLeftRadius: "50px",
-            borderTopRightRadius: "50px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            zIndex: 1,
-            width: "100%",
+            textAlign: "start",
+            marginTop: "20px",
+            height: "17vh",
           }}
         >
-          <div
+          <h1
             style={{
-              height: "40%",
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src={image}
-              alt="Profile"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "90%",
-                objectFit: "cover",
-                borderRadius:"50px",
-                height:"100%",
-                width:"44vh"
-              }}
-            />
-          </div>
-          <div style={{ width: "90%", height: "70%", textAlign: "start" }}>
-            <h1 style={{ margin: 0 }}>{name}</h1>
-            <p style={{ margin: 0 }}>{bio}</p>
-          </div>
-
-          <div
-            style={{
-              backgroundColor: "#808080",
-              height: "5vh",
+              color: "#FFFFFF",
+              fontFamily: "Public-Sans",
+              fontSize: 20,
+              fontWeight: "bold",
               width: "90%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderTopLeftRadius: "20px",
-              borderTopRightRadius: "20px",
-              borderBottomLeftRadius: "20px",
-              borderBottomRightRadius: "20px",
-              zIndex: 1,
+              margin: "0px auto",
             }}
-            onClick={(() => id && onButtonClick(id))}
           >
-            <h2 style={{ fontSize: "1rem" }}>Connect</h2>{" "}
-          </div>
-          <div
+            {name}
+          </h1>
+          <p
             style={{
-              width: "10vh",
-              height: "7vh",
-              margin: "10px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+              color: "#999999",
+              fontFamily: "Public-Sans",
+              fontSize: 14,
+              paddingTop: 10,
+              width: "90%",
+              height: "80%",
+              margin: "0px auto",
             }}
-            onClick={onClose}
           >
-            <CancelIcon fontSize="large" />
-          </div>
+            {bio}
+          </p>
         </div>
-      )}
-    </>
+        <LoginButtonComponent
+          name={ispending ? "Pending"  : "Connect"}
+          variant="contained"
+          onClick={() => id && onButtonClick(id)}
+          disable={!!ispending || isSaving}
+          style={{
+            fontFamily: "Public-Sans",
+            fontSize: 14,
+            fontWeight: ispending ? "500" : "bold",
+            width: "90%",
+            borderRadius: 8,
+            margin: "20px auto",
+            color: ispending ? "#FFFFFF" : "#000000",
+            backgroundColor: ispending || isSaving ? "#1F1F1F" : "#FFFFFF",
+          }}
+          isSaving={isSaving}
+        />
+      </>
+    </Drawer>
   );
 };
 

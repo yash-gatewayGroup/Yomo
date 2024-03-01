@@ -1,29 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import TopPageNumber from "../../components/TopPageNumber/TopPageNumber";
 import LoginButtonComponent from "../../components/Button/Button";
 import OtpInput from "react-otp-input";
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  ConfirmationResult,
-} from "firebase/auth";
-import { auth } from "../../firebase";
+import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
+import { auth, db, newTimestamp } from "../../firebase";
+import { CircularProgress } from "@mui/material";
+import Header from "../../components/Header/Header";
 
 interface OtpVerificationParams {
   phoneNumber?: string;
 }
 
+// auth.settings.appVerificationDisabledForTesting = true;
+
 const Otpscreen: React.FC = () => {
   const navigate = useNavigate();
   const { phoneNumber } = useParams<{ phoneNumber?: string }>();
-  const [confirmationResult, setConfirmationResult] =
-    useState<ConfirmationResult | null>(null);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isModalVisible, setModalVisibility] = useState<boolean>(true);
-  const [activePage, setActivePage] = useState<number>(2);
   const [otp, setOtp] = useState("");
   const [resendBtnDisabled, setResendBtnDisabled] = useState(true);
-  const [countDown, setCountDown] = useState(30);
+  const [countDown, setCountDown] = useState(50);
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
+
+  useEffect(() => {
+    const verifyToken = () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        sendOtp();
+      }
+    };
+    verifyToken();
+  }, []);
 
   useEffect(() => {
     let intervalId: any;
@@ -36,29 +44,17 @@ const Otpscreen: React.FC = () => {
       setResendBtnDisabled(false);
       setCountDown(30);
     }
-
     return () => {
       clearInterval(intervalId);
     };
   }, [resendBtnDisabled, countDown]);
 
-  useEffect(() => {
-    setTimeout(sendOtp, 2000);
-    return () => {
-      console.log("Component will unmount.");
-    };
-  }, []);
-
   const sendOtp = async () => {
     let verify = new RecaptchaVerifier(auth, "recaptcha-container", {
-      size: "normal",
-      callback: (response: any) => {
-        console.log("Verify Response", response);
-        return response;
-      },
-      expiredCallback: (r: any) => {
-        console.log("Expired-", r);
-      },
+      size: "visible",
+      callback: (response: any) => {},
+      "expired-callback": () => {},
+      siteKey: "6LfncGApAAAAAKz0aB2EZ6_yDYWrByfrPVto9GFE",
     });
 
     const formattedPhoneNumber: string = phoneNumber || "DefaultPhoneNumber";
@@ -67,7 +63,6 @@ const Otpscreen: React.FC = () => {
         setConfirmationResult(result);
         setModalVisibility(false);
         setResendBtnDisabled(true);
-        window.confirm.toString();
       })
       .catch((err) => {
         console.log(err);
@@ -76,30 +71,97 @@ const Otpscreen: React.FC = () => {
         } else {
           console.log("An unexpected error occurred. Please try again later.");
         }
+        setModalVisibility(false);
       });
+  };
+
+  const checkAndAddUser = async (user: any) => {
+    setIsLoading(true);
+    try {
+      const querySnapshot = await db.collection("users").where("phoneNumber", "==", phoneNumber).get();
+
+      if (querySnapshot.empty) {
+        // If phoneNumber is not present
+        await db
+          .collection("users")
+          .add({
+            phoneNumber: phoneNumber,
+            uid: user.uid,
+            timestamp: newTimestamp,
+          })
+          .then((docRef: any) => {
+            const userCollectionId = docRef.id;
+            console.log(userCollectionId);
+            localStorage.setItem("token", user.accessToken);
+            localStorage.setItem("userCollectionId", userCollectionId);
+            navigate("/welcome");
+            window.location.reload();
+          })
+          .catch((err: any) => {
+            console.log("Error from catch block", err);
+          });
+      } else {
+        // If phoneNumber is present
+        let documentIdFound = false;
+        querySnapshot.forEach((doc: any) => {
+          const userCollectionId = doc.data();
+          localStorage.setItem("token", user.accessToken);
+          localStorage.setItem("databaseId", userCollectionId.documentId);
+          documentIdFound = true;
+          navigate("/dashboard");
+          window.location.reload();
+        });
+
+        if (!documentIdFound) {
+          // If phoneNumber is present but documentId is not present
+          await db
+            .collection("users")
+            .add({
+              phoneNumber: phoneNumber,
+              uid: user.uid,
+              timestamp: newTimestamp,
+            })
+            .then((docRef: any) => {
+              const userCollectionId = docRef.id;
+              console.log(userCollectionId);
+              localStorage.setItem("token", user.accessToken);
+              localStorage.setItem("userCollectionId", userCollectionId);
+              navigate("/welcome");
+              window.location.reload();
+            })
+            .catch((err: any) => {
+              console.log("Error from catch block", err);
+            });
+        }
+      }
+    } catch (error) {
+      console.error("Error checking and adding user:", error);
+    }
   };
 
   const handleVerify = async () => {
     if (otp === null) return;
     try {
       if (confirmationResult) {
+        setIsLoading(true);
         confirmationResult
           .confirm(otp)
           .then((credential) => {
             const user = credential;
-            localStorage.setItem("User", "true");
             if (user.user) {
-              navigate("/welcome");
-              window.location.reload();
+              checkAndAddUser(user.user);
             }
           })
           .catch((err) => {
+            setIsLoading(false);
             console.log("Verification Unsuccessful,User", err);
           });
       } else {
+        setIsLoading(false);
         console.error("Confirmation result is null");
       }
     } catch (error: any) {
+      setIsLoading(false);
       console.error("Verification failed:", error);
       if (error.code === "auth/invalid-verification-code") {
         alert("The OTP you have Entered is Invalid");
@@ -112,35 +174,56 @@ const Otpscreen: React.FC = () => {
       {isModalVisible && (
         <div className="modal">
           <div className="modal-content">
-            <div id="recaptcha-container"></div>
+            <div id="recaptcha-container">
+            </div>
           </div>
         </div>
       )}
+      {isLoading && (
+        <div className="modal">
+          <CircularProgress />
+        </div>
+      )}
+      <Header showLogo={true} showBackButton={true} />
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          height: "90vh",
+          height: "100%",
+          backgroundColor: "#000000",
         }}
       >
-        <TopPageNumber
-          activePage={activePage}
-        />
         <div
           style={{
             height: "20%",
             display: "flex",
-            width: "73%",
+            width: "90%",
             flexDirection: "column",
             alignItems: "flex-start",
             justifyContent: "flex-start",
             marginTop: "20px",
           }}
         >
-          <h2>Got it, please confirm your number</h2>
-          <h5 style={{ fontFamily: "sans-serif" }}>
+          <h2
+            style={{
+              fontFamily: "Public Sans",
+              fontSize: 24,
+              fontWeight: "bold",
+              color: "#FFFFFF",
+            }}
+          >
+            Got it, please confirm your number
+          </h2>
+          <h5
+            style={{
+              fontFamily: "Public Sans",
+              color: "#A8A8A8",
+              fontWeight: "400",
+              fontSize: 14,
+            }}
+          >
             We've sent a 6-digit code to your Mobile No. Please <br />
             enter the code in the box below to verify your number
           </h5>
@@ -153,6 +236,7 @@ const Otpscreen: React.FC = () => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            backgroundColor: "#000000",
           }}
         >
           <OtpInput
@@ -164,48 +248,52 @@ const Otpscreen: React.FC = () => {
             renderInput={(props) => <input {...props} />}
             inputStyle={{
               height: "100%",
-              width: "70%",
-              fontSize: 18,
+              width: "100%",
+              fontSize: 15,
               margin: "10px 0",
+              backgroundColor: "transparent",
+              border: "1px solid #ffffff",
+              outline: "none",
+              color: "#FFFFFF",
+              fontFamily: "Public Sans",
+              fontWeight: "400",
             }}
           />
-          <div
+        </div>
+        <div
+          style={{
+            height: "20%",
+            display: "flex",
+            width: "90%",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <LoginButtonComponent variant="contained" onClick={handleVerify} name="Verify" />
+          <button
             style={{
-              height: "20%",
-              display: "flex",
-              width: "82%",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
+              cursor: "pointer",
+              border: "none",
+              backgroundColor: "transparent",
+              marginTop: "10px",
+              fontSize: "14px",
+              textDecoration: "underline",
             }}
+            disabled={resendBtnDisabled}
+            onClick={() => {}}
           >
-            <LoginButtonComponent
-              onClick={handleVerify}
-              name="verify"
-              variant="contained"
-              style={{ width: "100%", height: "40px", marginTop: "70px" }}
-            />
-            <p>
-              Didn't get the code?
-              <button
-                style={{
-                  color: resendBtnDisabled ? "grey" : "blue",
-                  cursor: "pointer",
-                  border: "none",
-                  backgroundColor: "transparent",
-                  marginTop: "10px",
-                  fontSize: "14px",
-                  textDecoration: "underline",
-                }}
-                disabled={resendBtnDisabled}
-                onClick={() => {
-                  sendOtp();
-                }}>
-                Resend it
-              </button>
-              {countDown > 0 && countDown < 30 && `(after ${countDown}s)`}
+            <p
+              style={{
+                color: "#666666",
+                fontWeight: "500",
+                fontSize: 16,
+                fontFamily: "Public Sans",
+              }}
+            >
+              Resend Code: {countDown > 0 && countDown < 130 && `${countDown}s`}
             </p>
-          </div>
+          </button>
         </div>
       </div>
     </>

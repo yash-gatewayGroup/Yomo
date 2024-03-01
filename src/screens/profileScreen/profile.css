@@ -1,40 +1,42 @@
-
 .profile-picture {
   max-height: 20%;
   max-width: 7vh;
   border-radius: 50%;
+  width: "auto";
+  height: "30vh";
+  object-fit: "cover";
 }
 
 .details {
   width: 100%;
   margin: 0;
   height: auto;
+  padding-inline-start: 10px;
+  width: 74%;
 }
 
-.icon {
+.iconforward {
   width: 8vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex: 1;
 }
 
 .container {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  background-color: #000000;
 }
 
-.content {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-}
-
-
-.additional-settings{
+.additional-settings {
   padding-top: 10;
   width: "100%";
   display: "flex";
   flex-direction: "column";
+  height: 100%;
+  background-color: #000000;
 }
 
 .account-settings,
@@ -42,7 +44,7 @@
 .help {
   display: flex;
   align-items: center;
-  padding: 8px;
+  padding: 10px;
 }
 
 .account-settings p,
@@ -68,7 +70,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: #000000;
 }
 
 /* Blocked User Css*/
@@ -80,6 +82,13 @@
   padding: 10px;
 }
 
+.block-user-container {
+  background-color: #000000;
+  height: 100%;
+  display: "flex";
+  flex-direction: "column";
+}
+
 .blocked-user-item {
   display: flex;
   align-items: center;
@@ -89,8 +98,8 @@
 }
 
 .profile-pic-container {
-  position: relative; 
-  width: 80px;
+  position: relative;
+  width: 90px;
   height: 6vh;
   border-radius: 50%;
   overflow: hidden;
@@ -118,7 +127,7 @@
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
-  background-color: #a18080;
+  background-color: #1f1f1f;
   color: white;
   font-weight: bold;
   cursor: pointer;
@@ -126,8 +135,8 @@
 
 .status-dot {
   position: absolute;
-  top: 74%; 
-  left: 84%; 
+  top: 78%;
+  left: 80%;
   transform: translate(-50%, -50%);
   width: 10px;
   height: 10px;
@@ -144,26 +153,54 @@
 
 /* Profile Detail Screen Css*/
 
-.image-container {
-  display: flex;
+.image-container-profile-detail {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  height: 100%;
+  background-color: #000000;
 }
 
 .image-wrapper {
-  position: relative;
+  height: 50vh;
   width: 100%;
-  height: 300px;
+  max-width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
 .image-wrapper img {
-  max-width: 80%;
-  max-height: 80%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.image-overlay {
+  position: relative;
+  display: inline-block;
+}
+
+.overlay-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 20%;
+}
+.overlay-image {
+  width: 100%;
+  height: auto;
+  color: #ffffff;
+  padding-inline-start: 25px;
+}
+.overlay-text {
+  font-size: 12px;
+  font-weight: 400;
+  font-family: "Public Sans";
+  color: #ffffff;
+  margin-top: 2px;
 }
 
 .image-placeholder {
@@ -199,19 +236,33 @@
 }
 
 .textBox-container {
-  margin-bottom: 40px;
-  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  padding-top: 30px;
   align-items: center;
+  justify-content: center;
+}
+.login-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+  width: 100%;
 }
 
-.login-button-container {
-  width: 90%;
+.block-text {
+  color: #666666;
+  font-family: "Public Sans";
+  font-size: 12px;
+  font-weight: 400;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
-

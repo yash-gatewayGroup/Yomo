@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 const BottomNav: FC<HeaderProps> = ({ screenValue }) => {
-  const [value, setValue] = React.useState<string>(screenValue || '');
+  const [value, setValue] = React.useState<string>(screenValue || 'location');
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setValue(newValue);
@@ -20,7 +20,7 @@ const BottomNav: FC<HeaderProps> = ({ screenValue }) => {
 
   const getIconStyle = (selected: boolean) => {
     return {
-      color: selected ? "#fff" : "#ffffffa8",
+      color: selected ? "#FFFFFF" : "#646464",
     };
   };
 
@@ -28,8 +28,9 @@ const BottomNav: FC<HeaderProps> = ({ screenValue }) => {
     return (
       <BottomNavigation
         value={value}
+        showLabels={true}
         onChange={handleChange}
-        style={{ backgroundColor: "#030104" }}
+        style={{ backgroundColor: "#000000" }}
       >
         {props.children}
       </BottomNavigation>
@@ -40,7 +41,7 @@ const BottomNav: FC<HeaderProps> = ({ screenValue }) => {
     <div style={{ position: 'fixed', bottom: 0, width: '100%' }}>
       <CustomBottomNavigation>
         <BottomNavigationAction
-          label="chats"
+          label="Chats"
           value="chats"
           icon={<ChatBubbleIcon fontSize='small' />}
           style={getIconStyle(value === 'chats')}
@@ -48,21 +49,21 @@ const BottomNav: FC<HeaderProps> = ({ screenValue }) => {
           to="/chats"  
         />
         <BottomNavigationAction 
-        label="location" 
+        label="Near You" 
         value="location" 
         icon={<PlaceIcon fontSize='medium' />} 
         style={getIconStyle(value === 'location')} 
         component={Link}
         to="/location" 
         />
-        <BottomNavigationAction label="connection" 
+        <BottomNavigationAction label="Connection" 
         value="connection" 
         icon={<GroupAddIcon fontSize='medium' />} 
         style={getIconStyle(value === 'connection')} 
         component={Link}
         to="/connection"
         />
-        <BottomNavigationAction label="profile" 
+        <BottomNavigationAction label="My Profile" 
         value="profile" 
         icon={<PersonIcon fontSize='medium' />} 
         style={getIconStyle(value === 'profile')} 
@@ -70,7 +71,7 @@ const BottomNav: FC<HeaderProps> = ({ screenValue }) => {
         to="/profile"
         />
       </CustomBottomNavigation>
-    </div>
+     </div>
   );
 }
 export default BottomNav;

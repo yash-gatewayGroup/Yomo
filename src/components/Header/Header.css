@@ -1,8 +1,9 @@
 .header {
-    background-color: #030104;
+    background-color: #000000;
     color: #fff;
     display: flex;
     justify-content: space-between;
+    height: '10%';
   }
 
   .left-section {

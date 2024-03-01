@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import BottomNav from "../../components/BottomNav/BottomNavigation";
 import Header from "../../components/Header/Header";
-import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import "./connection.css";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CancelIcon from "@mui/icons-material/Cancel";
-import BlockIcon from "@mui/icons-material/Block";
-import TextsmsIcon from "@mui/icons-material/Textsms";
 import { db } from "../../firebase";
-import { Timestamp } from "firebase/firestore";
-import { CircularProgress } from "@mui/material";
+import { Timestamp, collection, doc, documentId, onSnapshot, query, where } from "firebase/firestore";
+import SearchIcon from "@mui/icons-material/Search";
+import Card from "../../components/Cards/Card";
+import RecievedCard from "../../components/Cards/RecievedCard";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface FriendRequest {
   receiverId: string;
@@ -29,682 +28,437 @@ interface CustomerData {
   imageUrl: string;
   status: string;
   collectionId: string;
+  customerId: string;
+  friendRequestId: string;
   documentId?: string;
-}
-
-interface SenderData {
-  id: string;
-  name: string;
-  bio: string;
-  imageUrl: string;
-  status: string;
-  collectionId: string;
+  accepted?: (id: string, collectionId: string) => void;
+  rejected?: (id: string, collectionId: string) => void;
 }
 
 const ConnectionScreen = () => {
-  const [value, setValue] = React.useState("received");
+  // const [value, setValue] = React.useState("received");
   const [customerData, setCustomerData] = useState<CustomerData[]>([]);
-  const [receivecustomerData, setReceivecustomerData] = useState<SenderData[]>(
-    []
-  );
+  const [receivecustomerData, setReceivecustomerData] = useState<CustomerData[]>([]);
   const [myConnection, setMyConnections] = useState<CustomerData[]>([]);
   const [received, setReceived] = useState<number>(0);
   const id: string | null = localStorage.getItem("databaseId");
   const [loading, setLoading] = useState(false);
+  const [isSavingData, setIsSavingData] = useState<boolean>(false);
+  const [value, setValue] = useState("received");
 
-  // const getProfile = async (profileId: string) => {
-  //   try {
-  //     const snapshot: any = await db
-  //       .collection("customersData")
-  //       .doc(profileId)
-  //       .get();
-  //     setProfileSentData((prevData) => prevData.concat(snapshot.data()));
-  //   } catch (error) {
-  //     console.error("Error fetching profile:", error);
-  //     return null;
-  //   }
-  // };
+  // **********************************************************Common Function ******************************************************************//
 
-  // const getSentFriendRequests = async (senderId: string, userId: string) => {
-  //   try {
-  //     const snapshot = await db
-  //       .collection("customersData")
-  //       .doc(userId)
-  //       .collection("sent")
-  //       .doc(senderId)
-  //       .get();
-
-  //     const data = snapshot.data();
-  //     if (data) {
-  //       const sentRequest = {
-  //         receiverId: data.id,
-  //         status: data.status,
-  //       };
-  //       getProfile(data.id);
-  //       return sentRequest;
-  //     } else {
-  //       console.error("Document not found");
-  //       return null;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error getting sent friend request:", error);
-  //     return null;
-  //   }
-  // };
-
-  //Common Function For changing the Tab
-
+  //Handles the change of the Tab
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
     const totalCount = receivecustomerData.length;
     setReceived(totalCount);
   };
 
-  async function removeIdFromAcceptedIds(idToRemove: string) {    
-    try {
-      if (id) {
-        const userRef = db.collection("customersData").doc(id);
-        const userSnapshot = await userRef.get();
-        if (userSnapshot.exists) {
-          const userData = userSnapshot.data();
-          if (userData) {
-            const acceptedIds = userData.acceptedIds || [];
-            if (acceptedIds.includes(idToRemove)) {
-              const updatedAcceptedIds = acceptedIds.filter(
-                (id: any) => id !== idToRemove
-              );
-              await userRef.update({ acceptedIds: updatedAcceptedIds });
-              window.location.reload();
-              setLoading(false);
-            } else {
-              console.log(
-                `ID ${idToRemove} not found in accepted IDs for user ${id}`
-              );
-              window.location.reload();
-              setLoading(false);
-            }
-          } else {
-            console.log(`User document with ID ${id} not found`);
-            window.location.reload();
-            setLoading(false);
-          }
-        } else {
-          console.error("User data not available");
-          window.location.reload();
-          setLoading(false);
-        }
-      } else {
-        console.error("Id not Found");
-        window.location.reload();
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error removing ID from accepted IDs:", error);
-      window.location.reload();
-      setLoading(false);
-    }
-  }
-
-  //Function for Removing the Accepted Id's
-  const removeFromAcceptedIds = async (customerId: string) => {
-    try {
-      const customerDataRef = db.collection("customersData").doc(customerId);
-      const customerDataSnapshot = await customerDataRef.get();
-      if (customerDataSnapshot.exists) {
-        const customerData = customerDataSnapshot.data();
-        const existingIds = customerData?.acceptedIds || [];
-        const updatedAcceptedIds = existingIds.filter(
-          (existingId: any) => existingId !== id
-        );
-        await customerDataRef.update({
-          acceptedIds: updatedAcceptedIds,
-        });
-        console.error(
-          `Customer ID ${id} removed from the acceptedIds array in document ${customerId}`
-        );
-        removeIdFromAcceptedIds(customerId);
-      } else {
-        console.error(
-          `Document with ID ${customerId} does not exist in customersData collection.`
-        );
-        removeIdFromAcceptedIds(customerId);
-      }
-    } catch (error) {
-      console.error(`Error removing ${id} from acceptedIds:`, error);
-    }
-  };
-
-  //common Function for sending the user to the Blocked
-  const blocked = async (documentId: any) => {
-    setLoading(true);
-    if (id) {
-      const customerDataRef = db.collection("customersData").doc(id);
-      const customerDataSnapshot = await customerDataRef.get();
-
-      if (customerDataSnapshot.exists) {
-        const customerData = customerDataSnapshot.data();
-        const existingIds = customerData?.blockedIds || [];
-        const updatedIdsSet = new Set([...existingIds, documentId]);
-        const updatedIds = Array.from(updatedIdsSet);
-        await customerDataRef.update({
-          blockedIds: updatedIds,
-        });
-        removeFromAcceptedIds(documentId);
-      } else {
-        const updatedIds = [documentId];
-        await customerDataRef.set(
-          {
-            blockedIds: updatedIds,
-          },
-          { merge: true }
-        );
-        removeFromAcceptedIds(documentId);
-      }
+  // Remove customerId from 'pendingIds' in 'customersData'
+  const updatePendingIdsInUser = async (userId: string, idToRemove: string) => {
+    const docRef = db.collection("customersData").doc(userId);
+    const docSnapshot = await docRef.get();
+    if (docSnapshot.exists) {
+      const data = docSnapshot.data();
+      const updatedPendingIds = data?.pendingIds.filter((id: any) => id !== idToRemove);
+      await docRef.update({
+        pendingIds: updatedPendingIds,
+      });
     } else {
-      console.error("Error: No ID provided.");
+      console.log("Document does not exist.");
     }
   };
 
-  //When the user clicks for Received Tab
-  const Received = () => {
-    //Delete the data after the user has accepted the FriendRequests or deleted the Friend Requests
-    const deleteData = async (collectionId: string) => {
-      if (collectionId) {
-        setLoading(true);
-        await db.collection("friendRequests").doc(collectionId).delete();
-        window.location.reload();
-        setLoading(false);
-      } else {
-        console.error("No Collection Data Found");
-        setLoading(false);
+  // Add to 'connections' in 'customerData'
+  const updateConnectionsInUser = async (userId: string, idToAddInConnection: string) => {
+    if (id) {
+      const customerDataRef = db.collection("customersData").doc(userId);
+      const customerDataSnapshot = await customerDataRef.get();
+      if (customerDataSnapshot.exists) {
+        const customerData = customerDataSnapshot.data();
+        const existingConnections = customerData?.connections || [];
+        if (!existingConnections.includes(idToAddInConnection))
+          await customerDataRef.update({
+            connections: [...existingConnections, idToAddInConnection],
+          });
       }
-    };
+    }
+  };
 
-    //Get the Document ID by passing the id we are getting in the collection
-    const getDocumentIdsByField = async (
-      collectionPath: string,
-      fieldName: string,
-      fieldValue: any
-    ): Promise<string[]> => {
-      try {
-        const collectionRef = db.collection(collectionPath);
-        const querySnapshot = await collectionRef
-          .where(fieldName, "==", fieldValue)
-          .get();
-        const documentIds: string[] = [];
-        querySnapshot.forEach((doc) => {
-          documentIds.push(doc.id);
+  // Delete Friend Request from 'friendRequests'
+  const deleteFriendRequest = async (friendRequestId: string) => {
+    if (friendRequestId) await db.collection("friendRequests").doc(friendRequestId).delete();
+  };
+
+  // Add to 'blockedIds' in 'customersData'
+  const addUserToBlock = async (userId: string, userIdToBlock: string) => {
+    if (id) {
+      const customerDataRef = db.collection("customersData").doc(userId);
+      const customerDataSnapshot = await customerDataRef.get();
+      if (customerDataSnapshot.exists) {
+        const customerData = customerDataSnapshot.data();
+        const existingBlockedIds = customerData?.blockedIds || [];
+        if (!existingBlockedIds.includes(userIdToBlock)) {
+          await customerDataRef.update({
+            blockedIds: [...existingBlockedIds, userIdToBlock],
+          });
+        }
+      }
+    }
+  };
+
+  //Remove the userId From the Connection Array
+  const removeIdFromConnections = async (userId: string, idToRemove: string) => {
+    try {
+      const customerDataRef = db.collection("customersData").doc(userId);
+      const docSnapshot = await customerDataRef.get();
+      if (docSnapshot.exists) {
+        const data = docSnapshot.data();
+        const updatedConnectionIds = data?.connections.filter((id: any) => id !== idToRemove);
+        await customerDataRef.update({
+          connections: updatedConnectionIds,
         });
-        return documentIds;
-      } catch (error) {
-        console.error("Error getting document IDs:", error);
-        return [];
       }
-    };
+    } catch {
+      console.log("Catch Block Executed For Removing Id From the Connection Id");
+    }
+  };
 
+  //Fetch Customers from provided array of requests ("Used as common in the Received and send Tab useEffect")
+  const fetchCustomerData = async (recievedRequests: { customerId: string; friendRequestId: string }[]) => {
+    try {
+      const userData: CustomerData[] = [];
+      const customers = await db
+        .collection("customersData")
+        .where(
+          documentId(),
+          "in",
+          recievedRequests.map((r) => r.customerId)
+        )
+        .get();
+
+      if (customers.size > 0) {
+        customers.forEach((result: any) => {
+          userData.push({
+            ...result.data(),
+            customerId: result.id,
+            friendRequestId: recievedRequests.find((r) => r.customerId === result.id)?.friendRequestId,
+          });
+        });
+      }
+      return userData;
+    } catch (error) {
+      console.error("Error getting customer data:", error);
+      return [];
+    }
+  };
+
+  const searchClick = () => {
+    console.log("Search clicked");
+  };
+
+  // **********************************************************Common Function ******************************************************************//
+
+  // **********************************************************Received Tab ********************************************************************//
+  //If the user clicks for 'Receive' Tab
+  const Received = () => {
     //Function for Accepting the Friend Requests by the user
-    const accepted = async (customerId: string, collectionId: string) => {
-      let usersDocumentId: string;
-      setLoading(true);
+    const accepted = async (senderId: string, friendRequestId: string) => {
       try {
-        const documentIds = await getDocumentIdsByField(
-          "customersData",
-          "id",
-          customerId
-        );
-        if (documentIds.length > 0) {
-          usersDocumentId = documentIds[0];
-          if (id) {
-            const customerDataRef = db.collection("customersData").doc(id);
-            const customerDataSnapshot = await customerDataRef.get();
-            if (customerDataSnapshot.exists) {
-              const customerData = customerDataSnapshot.data();
-              const existingIds = customerData?.acceptedIds || [];
-              let updatedIds;
-              if (existingIds.length > 0) {
-                updatedIds = [...existingIds, usersDocumentId];
-              } else {
-                updatedIds = [usersDocumentId];
-              }
-              await customerDataRef.update({
-                acceptedIds: updatedIds,
-              });
-              setLoading(false);
-              const userDocumentRef = db
-                .collection("customersData")
-                .doc(usersDocumentId);
-              const userDocumentSnapshot = await userDocumentRef.get();
-              if (userDocumentSnapshot.exists) {
-                const userData = userDocumentSnapshot.data();
-                const existingAcceptedIds = userData?.acceptedIds || [];
-
-                let updatedAcceptedIds;
-                if (existingAcceptedIds.length > 0) {
-                  updatedAcceptedIds = [...existingAcceptedIds, id];
-                } else {
-                  updatedAcceptedIds = [id];
-                }
-
-                await userDocumentRef.update({
-                  acceptedIds: updatedAcceptedIds,
-                });
-                setLoading(false);
-              } else {
-                console.error(
-                  `Document with ID ${usersDocumentId} does not exist in users collection.`
-                );
-                setLoading(false);
-              }
-              deleteData(collectionId);
-            } else {
-              console.error("No data Exists");
-            }
-          }
+        if (senderId && id) {
+          setIsSavingData(true);
+          await updateConnectionsInUser(id, senderId);
+          await updateConnectionsInUser(senderId, id);
+          await updatePendingIdsInUser(id, senderId);
+          await updatePendingIdsInUser(senderId, id);
+          await deleteFriendRequest(friendRequestId);
+          setIsSavingData(false);
         } else {
-          console.error(
-            "Error: No document ID found for the provided customer ID."
-          );
-          setLoading(false);
+          console.error(`Document with ID does not exist in users collection.`);
         }
       } catch (error) {
         console.error("Error:", error);
-        setLoading(false);
       }
     };
 
     //If user Rejects the Friend Requests the this function is called
-    const rejected = async (customerId: string, collectionId: string) => {
-      setLoading(true);
-      let usersDocumentId: string;
+    const rejected = async (senderId: string, friendRequestId: string) => {
       try {
-        const documentIds = await getDocumentIdsByField(
-          "customersData",
-          "id",
-          customerId
-        );
-        if (documentIds.length > 0) {
-          usersDocumentId = documentIds[0];
-          blocked(usersDocumentId);
-          deleteData(collectionId);
-          setLoading(false);
-        } else {
-          console.error("No Id Found");
-          setLoading(false);
+        if (senderId && id && friendRequestId) {
+          await updatePendingIdsInUser(id, senderId);
+          await updatePendingIdsInUser(senderId, id);
+          await addUserToBlock(id, senderId);
+          await deleteFriendRequest(friendRequestId);
+          await handleChange;
         }
       } catch {
         console.error("errorr");
-        setLoading(false);
       }
     };
 
-    //Get the Id who sends the Requests
-    const getSendersIds = async () => {
+    // Fetch requests from 'friendRequests'
+    useEffect(() => {
       try {
-        const snapshot = await db
-          .collection("friendRequests")
-          .where("receiverId", "==", id)
-          .get();
-        const senderIds: { senderId: string; collectionId: string }[] = [];
-        snapshot.forEach((doc) => {
-          const collectionId = doc.id;
-          const { senderId } = doc.data() as FriendRequest;
-          senderIds.push({ senderId, collectionId });
+        const q = query(collection(db, "friendRequests"), where("receiverId", "==", id));
+        const unsub = onSnapshot(q, async (querySnapshot) => {
+          const recievedRequests: { customerId: string; friendRequestId: string }[] = [];
+          querySnapshot.forEach((doc) => {
+            const friendRequestId = doc.id;
+            const { senderId } = doc.data() as FriendRequest;
+            recievedRequests.push({ customerId: senderId, friendRequestId });
+          });
+          if (recievedRequests.length > 0) {
+            const senders = await fetchCustomerData(recievedRequests);
+            setReceivecustomerData(senders);
+          } else {
+            setReceivecustomerData([]);
+          }
         });
-        return senderIds;
+
+        return () => {
+          unsub();
+        };
       } catch (error) {
         console.error("Error getting sender IDs:", error);
-        return [];
+        return;
       }
-    };
-
-    //To get who has sended the Data
-    const fetchSenderData = async (
-      senderIds: { senderId: string; collectionId: string }[]
-    ) => {
-      setLoading(true);
-      const senderData: SenderData[] = [];
-      for (const { senderId, collectionId } of senderIds) {
-        try {
-          const snapshot = await db
-            .collection("customersData")
-            .doc(senderId)
-            .get();
-          if (snapshot.exists) {
-            const data = snapshot.data() as SenderData;
-            senderData.push(data);
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error(
-            `Error fetching sender data for ID ${senderId}:`,
-            error
-          );
-          setLoading(false);
-        }
-      }
-      return senderData.map((sender, index) => ({
-        ...sender,
-        collectionId: senderIds[index].collectionId,
-      }));
-    };
-
-    //Getting the Senders data for the send Tab
-    useEffect(() => {
-      const getSenderData = async () => {
-        setLoading(true);
-        try {
-          const senderIds = await getSendersIds();
-          const fetchedSenderData = await fetchSenderData(senderIds);
-          setReceivecustomerData(fetchedSenderData);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching sender data:", error);
-          setLoading(false);
-        }
-      };
-      getSenderData();
     }, []);
+    // **************************************************************//
 
     return (
       <>
-        {loading ? (
-          <div className="loading-indicator">
-            <CircularProgress />
+        {receivecustomerData.length === 0 ? (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
+              color: "#FFFFFF",
+              zIndex: 2,
+            }}
+          >
+            <span
+              style={{
+                color: "#666666",
+                fontFamily: "Public Sans",
+                fontSize: 12,
+                fontWeight: "400",
+              }}
+            >
+              You have not received any Friend Request
+            </span>
           </div>
         ) : (
           <div className="connection-user-list">
             {receivecustomerData.map((customer) => (
-              <div key={customer.id} className="connection-user-item">
-                <div className="profile-pic-container">
-                  <img
-                    src={customer.imageUrl}
-                    alt={customer.name}
-                    className="profile-pic"
-                  />
-                  <div
-                    className={`status-dot ${
-                      customer.status === "online" ? "green" : "red"
-                    }`}
-                  ></div>
-                </div>
-                <div className="user-details">
-                  <p className="user-name">{customer.name}</p>
-                </div>
-                <div
-                  style={{ paddingRight: 10 }}
-                  onClick={() => accepted(customer.id, customer.collectionId)}
-                >
-                  <CheckBoxIcon />
-                </div>
-                <div
-                  onClick={() => rejected(customer.id, customer.collectionId)}
-                >
-                  <CancelIcon />
-                </div>
-              </div>
+              <RecievedCard key={customer.customerId} customer={customer} accepted={accepted} rejected={rejected} isSaving={isSavingData} />
             ))}
           </div>
         )}
       </>
     );
   };
+  // **********************************************************Received Tab ********************************************************************//
 
-  //If the user is in the send tab then he wil be redirecting here
+  // **********************************************************Sender Tab **********************************************************************//
+  //If the user clicks for 'Sent' Tab
   const Sender = () => {
-    // const withDraw = async (userId: string) => {
-    //   console.error("userId", userId);
-
-    //   const id: string | null = localStorage.getItem("databaseId");
-    //   if (id) {
-    //     try {
-    //       const snapshot = await db.collection("customersData").doc(id).get();
-    //       const userData = snapshot.data();
-    //       if (userData && userData.id) {
-    //         const customerId = userData.id;
-    //         console.error("customerId",customerId);
-
-    //         if (userId === customerId) {
-    //           console.error("User ID matches customer ID");
-    //         } else {
-    //           console.error("User ID does not match customer ID");
-    //         }
-    //       } else {
-    //         console.error("Invalid customer data or missing ID");
-    //       }
-    //     } catch (error) {
-    //       console.error("Error getting customer data:", error);
-    //     }
-    //   }
-    // };
-    const withDraw = async (documentId: string) => {
-      setLoading(true);
+    // **************************************************************//
+    // Fetch requests from 'friendRequests'
+    useEffect(() => {
       try {
-        await db.collection("friendRequests").doc(documentId).delete();
-        window.location.reload();
-        setLoading(false);
-      } catch (error) {
-        console.error("Error withDrawing:", error);
-        setLoading(false);
-      }
-    };
-
-    //To get the id of the who has sended the Request
-    const getSendersIds = async () => {
-      setLoading(true);
-      try {
-        const snapshot = await db
-          .collection("friendRequests")
-          .where("senderId", "==", id)
-          .get();
-        const receiverIds: { receiverId: string; collectionId: string }[] = [];
-        snapshot.forEach((doc) => {
-          const collectionId = doc.id;
-          const { receiverId } = doc.data() as FriendRequest;
-          receiverIds.push({ receiverId, collectionId });
+        const q = query(collection(db, "friendRequests"), where("senderId", "==", id));
+        const unsub = onSnapshot(q, async (querySnapshot) => {
+          const sentRequests: { customerId: string; friendRequestId: string }[] = [];
+          querySnapshot.forEach((doc) => {
+            const friendRequestId = doc.id;
+            const { receiverId } = doc.data() as FriendRequest;
+            sentRequests.push({ customerId: receiverId, friendRequestId });
+          });
+          if (sentRequests.length > 0) {
+            setCustomerData(await fetchCustomerData(sentRequests));
+          } else {
+            setCustomerData([]);
+          }
         });
-        setLoading(false);
-        return receiverIds;
+
+        return () => {
+          unsub();
+        };
       } catch (error) {
         console.error("Error getting receiver IDs:", error);
-        setLoading(false);
-        return [];
+        return;
+      }
+    }, []);
+
+    // Withdraw Sent Request
+    const withdrawRequest = async (friendRequestId: string, receiverId: string, userId: string | null) => {
+      if (friendRequestId && receiverId && userId) {
+        setIsSavingData(true);
+        await updatePendingIdsInUser(userId, receiverId);
+        await updatePendingIdsInUser(receiverId, userId);
+        await deleteFriendRequest(friendRequestId);
+        setIsSavingData(false);
       }
     };
-
-    //To get the Customers data from the id
-    const getCustomerData = async (
-      receiverIds: { receiverId: string; collectionId: string }[]
-    ) => {
-      try {
-        const customerData: CustomerData[] = [];
-        for (const { receiverId } of receiverIds) {
-          const snapshot = await db
-            .collection("customersData")
-            .doc(receiverId)
-            .get();
-          if (snapshot.exists) {
-            const data = snapshot.data() as CustomerData;
-            customerData.push(data);
-          }
-        }
-        return customerData;
-      } catch (error) {
-        console.error("Error getting customer data:", error);
-        return [];
-      }
-    };
-
-    useEffect(() => {
-      setLoading(true);
-      if (id) {
-        getSendersIds().then(async (receiverIds) => {
-          const fetchedCustomerData = await getCustomerData(receiverIds);
-          setCustomerData(
-            fetchedCustomerData.map((customer, index) => ({
-              ...customer,
-              requestId: receiverIds[index].receiverId,
-              collectionId: receiverIds[index].collectionId,
-            }))
-          );
-        });
-        setLoading(false);
-      } else {
-        console.error("Id is not Present");
-      }
-    }, [id]);
+    // **************************************************************//
 
     return (
       <>
-        {loading ? (
-          <div className="loading-indicator">
-            <CircularProgress />
+        {customerData.length === 0 ? (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
+              color: "#FFFFFF",
+              zIndex: 2,
+            }}
+          >
+            <span
+              style={{
+                color: "#666666",
+                fontFamily: "Public Sans",
+                fontSize: 12,
+                fontWeight: "400",
+              }}
+            >
+              Yor have no pending send Friend Request
+            </span>
           </div>
         ) : (
           <div className="connection-user-list">
             {customerData.map((customer) => (
-              <div key={customer.collectionId} className="connection-user-item">
-                <div className="profile-pic-container">
-                  <img
-                    src={customer.imageUrl}
-                    alt={customer.name}
-                    className="profile-pic"
-                  />
-                  <div
-                    className={`status-dot ${
-                      customer.status === "online" ? "green" : "red"
-                    }`}
-                  ></div>
-                </div>
-                <div className="user-details">
-                  <p className="user-name">{customer.name}</p>
-                </div>
-                <button
-                  className="withdraw-button"
-                  onClick={() => withDraw(customer.collectionId)}
-                >
-                  withdraw
-                </button>
-              </div>
+              <Card
+                key={customer.id}
+                customer={customer}
+                deleteData={() => withdrawRequest(customer.friendRequestId, customer.customerId, id)}
+                btnName="Withdraw"
+                isSavingData={isSavingData}
+              />
             ))}
           </div>
         )}
       </>
     );
   };
+  // **********************************************************Sender Tab **********************************************************************//
 
+  // **********************************************************Connection Tab ******************************************************************//
   //if the user is in the Connection tab then user will redirected here
   const Connection = () => {
     useEffect(() => {
-      fetchAcceptedIds();
-    }, []);
-
-    //To fetch the id which are accepted Requests
-    const fetchAcceptedIds = async () => {
-      setLoading(true);
       try {
-        const id: string | null = localStorage.getItem("databaseId");
         if (id) {
-          const snapshot = await db.collection("customersData").doc(id).get();
-          if (snapshot.exists) {
+          const q = doc(db, "customersData", id);
+          const unsub = onSnapshot(q, async (snapshot) => {
             const data = snapshot.data();
-            if (data && data.acceptedIds) {
-              const acceptedIdsArray = data.acceptedIds;
-              getCustomerDataByIds(acceptedIdsArray)
-                .then((customerData) => {
-                  setMyConnections(customerData);
-                  setLoading(false);
-                })
-                .catch((error) => {
-                  console.error("Error:", error);
-                  setLoading(false);
-                });
+            const acceptedIdsArray = data?.connections;
+            if (acceptedIdsArray) {
+              const getBlockedUserData = await getConnectedUserDataByIds(acceptedIdsArray);
+              setMyConnections(getBlockedUserData);
             } else {
-              console.error("Accepted IDs field does not exist or is empty.");
-              setLoading(false);
+              setMyConnections([]);
             }
-          } else {
-            console.error("Document does not exist.");
-            setLoading(false);
-          }
+          });
+          return () => {
+            unsub();
+          };
         } else {
-          console.error("No database ID found.");
-          setLoading(false);
+          console.error("Accepted IDs field does not exist or is empty.");
         }
       } catch (error) {
         console.error("Error fetching accepted IDs:", error);
-        setLoading(false);
       }
-    };
+    }, []);
 
-    const getCustomerDataByIds = async (ids: string[]) => {
-      setLoading(true);
+    const getConnectedUserDataByIds = async (connectedIds: string[]) => {
       try {
-        const customerData: CustomerData[] = [];
-        for (const customerId of ids) {
-          const snapshot = await db
-            .collection("customersData")
-            .doc(customerId)
-            .get();
-          if (snapshot.exists) {
-            const data = snapshot.data() as CustomerData;
-            customerData.push({ ...data, documentId: snapshot.id });
-            setLoading(false);
-          } else {
-            console.error(`Document with ID ${customerId} does not exist`);
-            setLoading(false);
-          }
+        const customerDataPromises: Promise<CustomerData>[] = [];
+        for (const customerId of connectedIds) {
+          const docRef = doc(db, "customersData", customerId);
+          const promise = new Promise<CustomerData>((resolve, reject) => {
+            onSnapshot(
+              docRef,
+              (snapshot) => {
+                const data = snapshot.data() as CustomerData;
+                const newData = { ...data, customerId: snapshot.id };
+                resolve(newData);
+              },
+              reject
+            );
+          });
+          customerDataPromises.push(promise);
         }
-        return customerData;
+        const resolvedData = await Promise.all(customerDataPromises);
+        console.log("Customer Data:", resolvedData);
+        return resolvedData;
       } catch (error) {
-        console.error("Error getting customer data by IDs:", error);
-        setLoading(false);
+        console.error("Error fetching customer data:", error);
         return [];
       }
     };
 
-    const message = () => {};
+    //Send the user to the Block Array from the Connection
+    const rejected = async (senderId: string) => {
+      if (senderId && id) {
+        setIsSavingData(true);
+        await removeIdFromConnections(id, senderId);
+        await removeIdFromConnections(senderId, id);
+        await addUserToBlock(id, senderId);
+        setIsSavingData(false);
+      } else {
+        console.log("Else Block Executed because Either senderId, Id, FriendRequestId Not found while Block");
+      }
+    };
+
+    const message = () => {
+      console.log("Message");
+    };
+
+    // **********************************************************Connection Tab ******************************************************************//
 
     return (
       <>
-        {loading ? (
-          <div className="loading-indicator">
-            <CircularProgress />
+        {myConnection.length === 0 ? (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
+              color: "#FFFFFF",
+              zIndex: 2,
+            }}
+          >
+            <span
+              style={{
+                color: "#666666",
+                fontFamily: "Public Sans",
+                fontSize: 12,
+                fontWeight: "400",
+              }}
+            >
+              You are not Connected to anyone.
+            </span>
           </div>
         ) : (
           <div className="connection-user-list">
             {myConnection.map((connection) => (
-              <div key={connection.documentId} className="connection-user-item">
-                <div className="profile-pic-container">
-                  <img
-                    src={connection.imageUrl}
-                    alt={connection.name}
-                    className="profile-pic"
-                  />
-                  <div
-                    className={`status-dot ${
-                      connection.status === "online" ? "green" : "red"
-                    }`}
-                  ></div>
-                </div>
-                <div className="user-details">
-                  <p className="user-name">{connection.name}</p>
-                </div>
-                <div
-                  style={{
-                    flexDirection: "row",
-                    display: "flex",
-                    margin: 0,
-                    paddingTop: 7,
-                  }}
-                >
-                  <div style={{ paddingRight: 10 }} onClick={message}>
-                    <TextsmsIcon fontSize="medium" />
-                  </div>
-                  <div onClick={() => blocked(connection.documentId)}>
-                    <BlockIcon fontSize="small" />
-                  </div>
-                </div>
-              </div>
+              <RecievedCard
+                key={connection.id}
+                customer={connection}
+                accepted={message}
+                rejected={rejected}
+                imageName="true"
+                isSaving={isSavingData}
+              />
             ))}
           </div>
         )}
@@ -714,45 +468,46 @@ const ConnectionScreen = () => {
 
   return (
     <>
-      <Header headerName="Matches" />
-      <Box sx={{ width: "100%", typography: "body1" }}>
+      <Header headerName="Matches" showOptionButton={true} iconName={<SearchIcon />} onOptionClick={searchClick} />
+      <div className="tab-container">
         <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList
-              onChange={handleChange}
-              aria-label="lab API tabs example"
-              sx={{ fontWeight: "bold" }}
-            >
-              {received != 0 ? (
-                <Tab
-                  label={`received ${received}`}
-                  value="received"
-                  sx={{ fontWeight: "bold", color: "black" }}
-                />
-              ) : (
-                <Tab
-                  label={`received `}
-                  value="received"
-                  sx={{ fontWeight: "bold", color: "black" }}
-                />
-              )}
-              <Tab
-                label="Sent"
-                value="sent"
-                sx={{ fontWeight: "bold", color: "black" }}
-              />
-              <Tab
-                label="My Connection"
-                value="MyConnection"
-                sx={{ fontWeight: "bold", color: "black" }}
-              />
-            </TabList>
-          </Box>
+          <TabList onChange={handleChange}>
+            <Tab
+              value="received"
+              label={
+                <div className="main-received-box">
+                  <div className="tab-text">Received</div>
+                  {received !== 0 && <div className="received-box">{received}</div>}
+                </div>
+              }
+            />
+            <Tab
+              label="Sent"
+              value="sent"
+              className="tab-text"
+              style={{
+                color: "#FFFFFF",
+                fontWeight: "400",
+                fontSize: 14,
+                fontFamily: "Public Sans",
+              }}
+            />
+            <Tab
+              label="My Connection"
+              value="MyConnection"
+              style={{
+                color: "#FFFFFF",
+                fontWeight: "400",
+                fontSize: 14,
+                fontFamily: "Public Sans",
+              }}
+            />
+          </TabList>
           <TabPanel value="received">{Received()}</TabPanel>
           <TabPanel value="sent">{Sender()}</TabPanel>
           <TabPanel value="MyConnection">{Connection()}</TabPanel>
         </TabContext>
-      </Box>
+      </div>
       <BottomNav screenValue="connection" />
     </>
   );
