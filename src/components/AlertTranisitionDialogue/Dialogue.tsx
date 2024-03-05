@@ -8,6 +8,7 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import { makeStyles } from "@mui/styles";
 import LoginButtonComponent from "../Button/Button";
+import { colors } from "../../theme/colors";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -77,7 +78,7 @@ const AlertDialogSlide: React.FC<AlertDialogSlideProps> = ({
           variant="contained"
           style={{
             backgroundColor: "#919EAB",
-            color: "#FFFFFF",
+            color: colors.white,
             fontFamily: "Public Sans",
             fontSize: 14,
             fontWeight: "400",
@@ -89,8 +90,8 @@ const AlertDialogSlide: React.FC<AlertDialogSlideProps> = ({
           onClick={handleLogout}
           variant="contained"
           style={{
-            backgroundColor: "#FFFFFF",
-            color: "#000000",
+            backgroundColor: colors.white,
+            color: colors.theme_color,
             fontFamily: "Public Sans",
             fontSize: 14,
             fontWeight: "bold",

@@ -9,6 +9,8 @@ interface CustomMarkerProps {
   onClick?: MarkerProps["onClick"]
 }
 
-export const CustomMarker: React.FC<CustomMarkerProps> = (
-  props: CustomMarkerProps
-) => <MarkerF {...props} />;
+export default function CustomMarker(props: CustomMarkerProps) {
+  const { position, clusterer, draggable, shape, onClick } = props;
+
+  return <MarkerF position={position} clusterer={clusterer} draggable={draggable} shape={shape} onClick={onClick} />;
+}

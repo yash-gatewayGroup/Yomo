@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import "@fontsource/public-sans";
 import Drawer from "@mui/material/Drawer";
 import LoginButtonComponent from "../Button/Button";
 import firebase from "firebase/compat/app";
-import { CircularProgress } from "@mui/material";
+import { colors } from "../../theme/colors";
 
 interface BottomSheetProps {
   id: string | undefined | null;
@@ -79,7 +78,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           borderTopLeftRadius: 16,
           borderTopRightRadius: 16,
           height: "70vh",
-          backgroundColor: "#000000",
+          backgroundColor: colors.theme_color,
         },
       }}
       // sx={{ borderRadius: "25px", borderTopRightRadius: "25px" }}
@@ -104,7 +103,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         >
           <h1
             style={{
-              color: "#FFFFFF",
+              color: colors.white,
               fontFamily: "Public-Sans",
               fontSize: 20,
               fontWeight: "bold",
@@ -140,8 +139,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             width: "90%",
             borderRadius: 8,
             margin: "20px auto",
-            color: ispending ? "#FFFFFF" : "#000000",
-            backgroundColor: ispending || isSaving ? "#1F1F1F" : "#FFFFFF",
+            color: ispending ? colors.white : colors.theme_color,
+            backgroundColor: ispending || isSaving ? "#1F1F1F" : colors.white,
           }}
           isSaving={isSaving}
         />

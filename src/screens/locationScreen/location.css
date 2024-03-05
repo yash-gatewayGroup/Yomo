@@ -19,6 +19,17 @@
     margin-top: "20px";
 }
 
+.custom-cluster-icon {
+    border-radius: 50% !important; /* Make the cluster icon circular */
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Set background color */
+    color: white !important; /* Set text color */
+    width: 40px !important; /* Adjust width */
+    height: 40px !important; /* Adjust height */
+    display: flex !important; /* Set display mode to flex */
+    justify-content: center !important; /* Center content horizontally */
+    align-items: center !important; /* Center content vertically */
+  }
+  
 .loading-indicator {
     position: fixed;
     top: 0;

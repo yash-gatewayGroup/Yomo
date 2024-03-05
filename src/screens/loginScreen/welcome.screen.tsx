@@ -3,7 +3,6 @@ import "./style.css";
 import TextBoxComponent from "../../components/TextBox/TextBox";
 import LoginButtonComponent from "../../components/Button/Button";
 import { db, storage, newTimestamp } from "../../firebase";
-import ImageUploader from "react-images-upload";
 import firebase from "firebase/compat/app";
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +18,6 @@ const WelcomeScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const navigate = useNavigate();
-
   const handleImageChange = (files: File[]) => {
     setImageLoading(true);
     if (files.length > 0) {
@@ -54,8 +52,7 @@ const WelcomeScreen: React.FC = () => {
   }, []);
 
   const addDocumentId = async (documentId: string) => {
-    const changeId: string | undefined =
-      localStorage.getItem("userCollectionId") || undefined;
+    const changeId: string | undefined = localStorage.getItem("userCollectionId") || undefined;
     const dataAdd = await db.collection("users").doc(changeId).set(
       {
         documentId: documentId,
@@ -67,7 +64,7 @@ const WelcomeScreen: React.FC = () => {
 
   const handleUpload = async () => {
     if (!image) {
-      console.error("No image selected.");
+      <p style={{color:"white"}}>Please select an image.</p>;
     } else if (!customerName) {
       console.error("Kindly Write the Name.");
       return;
@@ -117,8 +114,6 @@ const WelcomeScreen: React.FC = () => {
 
   const customerBioWords = (value: any) => {
     const words = value.trim().split(/\s+/);
-    console.log(words);
-
     if (words.length <= 40) {
       setCustomerBio(value);
     }
@@ -128,206 +123,199 @@ const WelcomeScreen: React.FC = () => {
     <>
       <Header showLogo={true} />
       <div className="welcome-container">
-        {loading ? (
-          <div className="loading-indicator">
-            <CircularProgress color="primary" />
-          </div>
-        ) : (
-          <div>
-            <div
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            fontSize: 24,
+            fontFamily: "Public Sans",
+            fontWeight: "bold",
+            color: "#FFFFFF",
+            padding: "30px",
+          }}
+        >
+          Add Your details
+        </div>
+        <div className="image-upload-section">
+          {!imageUrl ? (
+            <label
               style={{
+                position: "relative",
                 display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-                fontSize: 24,
-                fontFamily: "Public Sans",
-                fontWeight: "bold",
-                color: "#FFFFFF",
-                padding: "30px",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "70%",
+                width: "70%",
+                borderRadius: "50%",
               }}
             >
-              Add Your details
-            </div>
-            <div className="image-upload-section">
-              {!imageUrl ? (
-                // <ImageUploader
-                //   onChange={handleImageChange}
-                //   withIcon={true}
-                //   className="circular-image-upload"
-                //   imgExtension={[".jpg", ".jpeg", ".png", ".gif"]}
-                //   maxFileSize={5242880}
-                //   buttonText={"Upload Image"}
-                //   style={{
-                //     borderRadius: "50%",
-                //     overflow: "hidden",
-                //     width: "30vh",
-                //     height: "20vh",
-                //     border: "2px dashed #666",
-                //   }}
-                // />
-                <label
-                  style={{
-                    position: "relative",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "70%",
-                    width: "70%",
-                    borderRadius: "50%",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <img
-                    src={imageUrl}
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      borderRadius: "50%",
-                      width: "60%",
-                      height: "60%",
-                      border: "2px dashed #666",
-                      borderColor: "#2f2f2f",
-                    }}
-                  />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{
-                      display: "none",
-                      backgroundColor: "#FFFFFF",
-                    }}
-                    onChange={(e: any) => {
-                      console.log("image", e.target.files);
-                      handleImageChange(e.target.files);
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      backgroundColor: "#1a1a1a",
-                      borderRadius: "50%",
-                      width: "50%",
-                      height: "50%",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <PhotoCameraRoundedIcon style={{ color: "FFFFFF" }} />
-                    <div className="overlay-text">Update photo</div>
-                  </div>
-                  <div
-                    style={{
-                      color: "#A8A8A8",
-                      alignSelf: "flex-end",
-                      textAlign: "center",
-                      fontSize: 12,
-                      fontFamily: "Public Sans",
-                      fontWeight: 400,
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif <br></br> Max size of
-                    3.1 MB
-                  </div>
-                </label>
-              ) : imageLoading ? (
-                <CircularProgress />
-              ) : (
-                <label
-                  style={{
-                    position: "relative",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "70%",
-                    width: "70%",
-                    borderRadius: "50%",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <img
-                    src={imageUrl}
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      borderRadius: "50%",
-                      width: "60%",
-                      height: "60%",
-                      border: "2px dashed #666",
-                      borderColor: "#2f2f2f",
-                    }}
-                  />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{
-                      display: "none",
-                      backgroundColor: "#FFFFFF",
-                    }}
-                    onChange={(e: any) => {
-                      console.log("image", e.target.files);
-                      handleImageChange(e.target.files);
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                    }}
-                  >
-                    <ModeEditRoundedIcon style={{ color: "FFFFFF" }} />
-                  </div>
-                </label>
-              )}
-            </div>
-
-            <div className="form-section">
-              <TextBoxComponent
-                value={customerName}
-                onChange={(value) => customerNameWords(value)}
-                label="Full Name"
-                variant="outlined"
-                fullWidth
-                color="white"
+              <div
                 style={{
-                  borderRadius: "8px",
-                  width: "90%",
-                  fontSize: 14,
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  borderRadius: "50%",
+                  width: "60%",
+                  height: "60%",
+                  border: "2px dashed #666",
+                  borderColor: "#2f2f2f",
                 }}
-                placeholder={"Your Name Here"}
               />
-
-              <TextBoxComponent
-                value={customerBio}
-                onChange={(value) => customerBioWords(value)}
-                label="Bio"
-                variant="outlined"
-                fullWidth
-                color="white"
+              <input
+                type="file"
+                accept="image/*"
                 style={{
-                  borderRadius: "8px",
-                  width: "90%",
-                  fontSize: 14,
-                  maxLines: 3,
-                  paddingBottom: "30px",
+                  display: "none",
+                  backgroundColor: "#FFFFFF",
                 }}
-                placeholder={"Describe yourself in few Words"}
-                multiline={true}
-                rows={3}
+                onChange={(e: any) => {
+                  handleImageChange(e.target.files);
+                }}
               />
-
-              <LoginButtonComponent
-                variant="contained"
-                onClick={handleUpload}
-                name="Save"
-              />
+              <div
+                style={{
+                  position: "absolute",
+                  backgroundColor: "#1a1a1a",
+                  borderRadius: "50%",
+                  width: "50%",
+                  height: "50%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <PhotoCameraRoundedIcon style={{ color: "FFFFFF" }} />
+                <div className="overlay-text">Upload photo</div>
+              </div>
+              <div
+                style={{
+                  color: "#A8A8A8",
+                  alignSelf: "flex-end",
+                  textAlign: "center",
+                  fontSize: 12,
+                  fontFamily: "Public Sans",
+                  fontWeight: 400,
+                }}
+              >
+                Allowed *.jpeg, *.jpg, *.png, *.gif <br></br> Max size of 3.1 MB
+              </div>
+            </label>
+          ) : imageLoading ? (
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                borderRadius: "50%",
+                width: "80%",
+                height: "80%",
+                border: "2px dashed #666",
+                borderColor: "#2f2f2f",
+              }}
+            >
+              <CircularProgress />
             </div>
-          </div>
-        )}
+          ) : (
+            <label
+              style={{
+                position: "relative",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "60%",
+                width: "60%",
+                borderRadius: "50%",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  borderRadius: "50%",
+                  width: "80%",
+                  height: "80%",
+                  border: "2px dashed #666",
+                  borderColor: "#2f2f2f",
+                }}
+              >
+                <img
+                  src={imageUrl}
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    borderRadius: "50%",
+                    width: "80%",
+                    height: "80%",
+                  }}
+                />
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                style={{
+                  display: "none",
+                  backgroundColor: "#FFFFFF",
+                }}
+                onChange={(e: any) => {
+                  handleImageChange(e.target.files);
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                }}
+              >
+                <ModeEditRoundedIcon style={{ color: "FFFFFF" }} />
+              </div>
+            </label>
+          )}
+        </div>
+
+        <div className="form-section">
+          <TextBoxComponent
+            value={customerName}
+            onChange={(value) => customerNameWords(value)}
+            label="Full Name"
+            variant="outlined"
+            fullWidth
+            color="white"
+            style={{
+              borderRadius: "8px",
+              width: "90%",
+              fontSize: 14,
+            }}
+            placeholder={"Your Name Here"}
+          />
+
+          <TextBoxComponent
+            value={customerBio}
+            onChange={(value) => customerBioWords(value)}
+            label="Bio"
+            variant="outlined"
+            fullWidth
+            color="white"
+            style={{
+              borderRadius: "8px",
+              width: "90%",
+              fontSize: 14,
+              maxLines: 3,
+              paddingBottom: "30px",
+            }}
+            placeholder={"Describe yourself in few Words"}
+            multiline={true}
+            rows={3}
+          />
+
+          <LoginButtonComponent variant="contained" onClick={handleUpload} name="Save" isSaving={loading} />
+        </div>
       </div>
     </>
   );

@@ -9,6 +9,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { CircularImage } from "../../components/CircleImage/circleImage";
 
 interface UserInfo {
   bio: string;
@@ -22,19 +23,22 @@ const ProfileScreen = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const id: any = localStorage.getItem("databaseId");    
+    const id: any = localStorage.getItem("databaseId");
     if (id) {
       fetchData(id);
     }
   }, []);
 
   const fetchData = (id: string) => {
-    Firebase.firestore().collection("customersData").doc(id).get()
+    Firebase.firestore()
+      .collection("customersData")
+      .doc(id)
+      .get()
       .then((doc) => {
         if (doc.exists) {
           const data = doc.data() as UserInfo | undefined;
           if (data) {
-            setInfo([data]); 
+            setInfo([data]);
           } else {
             console.log("Document data is undefined for ID:", id);
           }
@@ -72,98 +76,98 @@ const ProfileScreen = () => {
         <>
           <div className="container">
             {info.map((data, index) => (
-              <div
-                className="account-settings"
-                key={index}
-                onClick={handleProfileAction}
-              >
-           
-                  {data.imageUrl ? (
-                    <img
-                      src={data.imageUrl}
-                      alt="Profile"
-                      style={{
-                        height:"7vh",
-                        width: "7vh",
-                        objectFit: "cover",
-                        maxHeight:"10vh",
-                        maxWidth: '7vh',
-                        borderRadius:'50%'
-                      }}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor: "#ddd",
-                      }}
-                    ></div>
-                  )}
+              <div className="account-settings" key={index} onClick={handleProfileAction}>
+                {data.imageUrl ? (
+                  <div
+                    style={{
+                      height: "6vh",
+                      width: "6vh",
+                      objectFit: "cover",
+                      maxHeight: "10vh",
+                      maxWidth: "7vh",
+                      borderRadius: "50%",
+                      paddingInlineStart: "7px",
+                    }}
+                  >
+                    <CircularImage imageUrl={data.imageUrl} alt={data.name} />
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: "#ddd",
+                    }}
+                  ></div>
+                )}
                 <div className="details">
-                  <p style={{ fontSize: 16, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
-                    {data.name}
-                  </p>
-                  <p style={{ margin: 0, fontSize: 14, color:"#637381", fontWeight: "400", fontFamily: 'Public Sans', textOverflow: 'ellipsis', 
-                  overflow:'hidden', whiteSpace: 'nowrap',width:"100%" }}>
+                  <p style={{ fontSize: 16, margin: 0, fontWeight: "400", fontFamily: "Public Sans", color: "#FFFFFF" }}>{data.name}</p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 14,
+                      color: "#637381",
+                      fontWeight: "400",
+                      fontFamily: "Public Sans",
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      width: "100%",
+                    }}
+                  >
                     {data.bio}
                   </p>
                 </div>
                 <div className="iconforward">
-                  <ArrowForwardIosIcon style={{color:"#FFFFFF"}} />
+                  <ArrowForwardIosIcon style={{ color: "#FFFFFF" }} />
                 </div>
               </div>
             ))}
             <div className="additional-settings">
               <div className="account-settings" onClick={handleAction}>
                 <div className="settings-icon">
-                  <SettingsIcon style={{color:"#FFFFFF"}} />
+                  <SettingsIcon style={{ color: "#FFFFFF" }} />
                 </div>
-                <div
-                  style={{ flex: "1", textAlign: "left" }}
-                >
-                  <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
-                    Account settings
-                  </p>
+                <div style={{ flex: "1", textAlign: "left" }}>
+                  <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: "Public Sans", color: "#FFFFFF" }}>Account settings</p>
                 </div>
                 <div>
-                  <ArrowForwardIosIcon style={{color:"#FFFFFF"}}/>
+                  <ArrowForwardIosIcon style={{ color: "#FFFFFF" }} />
                 </div>
               </div>
 
-              <div
-                style={{ display: "flex", alignItems: "center", padding: 8 }}
-                onClick={handleBlockAction}
-              >
+              <div style={{ display: "flex", alignItems: "center", padding: 8 }} onClick={handleBlockAction}>
                 <div style={{ padding: 10 }}>
-                  <BlockIcon style={{color:"#FFFFFF"}} />
+                  <BlockIcon style={{ color: "#FFFFFF" }} />
                 </div>
-                <div
-                  style={{ flex: "1", textAlign: "left" }}
-                >
-                  <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
-                    Blocked Users
-                  </p>
+                <div style={{ flex: "1", textAlign: "left" }}>
+                  <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: "Public Sans", color: "#FFFFFF" }}>Blocked Users</p>
                 </div>
                 <div>
-                  <ArrowForwardIosIcon style={{color:"#FFFFFF"}}/>
+                  <ArrowForwardIosIcon style={{ color: "#FFFFFF" }} />
                 </div>
               </div>
 
-              <div
-                style={{ display: "flex", alignItems: "center", padding: 8 }}
-              >
+              <div style={{ display: "flex", alignItems: "center", padding: 8 }}>
                 <div style={{ padding: 10 }}>
-                  <HelpOutlineIcon style={{color:"#FFFFFF"}} />
+                  <HelpOutlineIcon style={{ color: "#FFFFFF" }} />
                 </div>
-                <div
-                  style={{ flex: "1", textAlign: "left" }}
-                >
-                 <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: 'Public Sans', color:"#FFFFFF" }}>
-                    Help
-                  </p>
+                <div style={{ flex: "1", textAlign: "left" }}>
+                  <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: "Public Sans", color: "#FFFFFF" }}>Help</p>
                 </div>
               </div>
+            </div>
+            <div
+              style={{
+                color: "#666666",
+                justifyContent: "center",
+                alignSelf: "center",
+                fontFamily: "Public Sans",
+                fontSize: 12,
+                fontWeight: "600",
+              }}
+            >
+              V2.0.0
             </div>
           </div>
         </>

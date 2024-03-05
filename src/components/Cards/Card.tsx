@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { CircularImage } from "../CircleImage/circleImage";
 import "./CardStyle.css";
 import { CircularProgress } from "@mui/material";
+import { colors } from "../../theme/colors";
 
 interface Customer {
   collectionId: string;
@@ -48,7 +49,7 @@ const Card: React.FC<Props> = ({ customer, deleteData, btnName, isSavingData }) 
       <div className="userdetails">{customer.name}</div>
 
       <button className="withdraw-button" onClick={handleClick} disabled={isSavingData}>
-        {isSavingData && loading && <CircularProgress size={15} style={{ color:"#ffffff", justifyContent: "center", alignContent: "center" }} />}
+        {isSavingData && loading && <CircularProgress size={15} style={{ color:colors.white, justifyContent: "center", alignContent: "center" }} />}
         {isSavingData && loading ? "" : btnName}
       </button>
     </div>

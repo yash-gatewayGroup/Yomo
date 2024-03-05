@@ -6,8 +6,7 @@ import { CircularProgress } from "@mui/material";
 import Card from "../../components/Cards/Card";
 import "./profile.css";
 import { doc, onSnapshot } from "firebase/firestore";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 
 interface CustomerData {
   id: string;
@@ -90,7 +89,6 @@ const Blockeduser = () => {
           blockedIds: updatedBlockedConnectionIds,
         });
         setIsSavingData(false);
-        toast.success("successful");
       }
     } catch {
       console.log("Catch Block Executed For Removing Id From the Connection Id");

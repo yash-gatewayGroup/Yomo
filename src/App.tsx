@@ -15,7 +15,7 @@ import ProfileDetail from "./screens/profileScreen/profileDetails";
 import Blockeduser from "./screens/profileScreen/blockedUser";
 import { db } from "./firebase";
 import InternetConnectivity from "./components/InternetConnectivity/InternetConnectivity";
-import { ToastContainer } from "react-toastify";
+import { colors } from "./theme/colors";
 
 const App: React.FC = () => {
   const [userStatus, setUserStatus] = useState<string>("offline");
@@ -45,26 +45,17 @@ const App: React.FC = () => {
     return () => clearTimeout(awayTimeout);
   }, []);
 
-
   return (
     <Router>
       {/* <Header /> */}
+      <div style={{height:"7%",backgroundColor:colors.theme_color}}></div>
       <div style={{ flexGrow: 1 }}>
         <InternetConnectivity />
         <Routes>
           <Route path="/" element={<SplashScreen />} />
-          <Route
-            path="/login"
-            element={token!== 'null' ? <Login /> : <DashboardScreen />}
-          />
-          <Route
-            path="/otpscreen/:phoneNumber"
-            element={token!== 'null' ? <Otpscreen /> : <DashboardScreen />}
-          />
-          <Route
-            path="/welcome"
-            element={<WelcomeScreen />}
-          />
+          <Route path="/login" element={token !== "null" ? <Login /> : <DashboardScreen />} />
+          <Route path="/otpscreen/:phoneNumber" element={token !== "null" ? <Otpscreen /> : <DashboardScreen />} />
+          <Route path="/welcome" element={<WelcomeScreen />} />
           <Route path="/dashboard" element={<DashboardScreen />} />
           <Route path="/accountSettings" element={<AccountSettingScreen />} />
           <Route path="/chats" element={<ChatScreen />} />
@@ -74,7 +65,6 @@ const App: React.FC = () => {
           <Route path="/profileDetails" element={<ProfileDetail />} />
           <Route path="/blockeduser" element={<Blockeduser />} />
         </Routes>
-        <ToastContainer />
       </div>
       {/* <BottomNav /> */}
     </Router>

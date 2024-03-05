@@ -11,8 +11,6 @@ import { Timestamp, collection, doc, documentId, onSnapshot, query, where } from
 import SearchIcon from "@mui/icons-material/Search";
 import Card from "../../components/Cards/Card";
 import RecievedCard from "../../components/Cards/RecievedCard";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 interface FriendRequest {
   receiverId: string;
@@ -42,7 +40,6 @@ const ConnectionScreen = () => {
   const [myConnection, setMyConnections] = useState<CustomerData[]>([]);
   const [received, setReceived] = useState<number>(0);
   const id: string | null = localStorage.getItem("databaseId");
-  const [loading, setLoading] = useState(false);
   const [isSavingData, setIsSavingData] = useState<boolean>(false);
   const [value, setValue] = useState("received");
 
@@ -468,8 +465,8 @@ const ConnectionScreen = () => {
 
   return (
     <>
-      <Header headerName="Matches" showOptionButton={true} iconName={<SearchIcon />} onOptionClick={searchClick} />
       <div className="tab-container">
+      <Header headerName="Matches" showOptionButton={true} iconName={<SearchIcon />} onOptionClick={searchClick} />
         <TabContext value={value}>
           <TabList onChange={handleChange}>
             <Tab

@@ -6,6 +6,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import PersonIcon from '@mui/icons-material/Person';
 import { Link } from 'react-router-dom';
+import { colors } from '../../theme/colors';
 
 interface HeaderProps {
   screenValue?: string;
@@ -20,7 +21,7 @@ const BottomNav: FC<HeaderProps> = ({ screenValue }) => {
 
   const getIconStyle = (selected: boolean) => {
     return {
-      color: selected ? "#FFFFFF" : "#646464",
+      color: selected ? colors.white : "#646464",
     };
   };
 
@@ -30,7 +31,7 @@ const BottomNav: FC<HeaderProps> = ({ screenValue }) => {
         value={value}
         showLabels={true}
         onChange={handleChange}
-        style={{ backgroundColor: "#000000" }}
+        style={{ backgroundColor: colors.theme_color }}
       >
         {props.children}
       </BottomNavigation>

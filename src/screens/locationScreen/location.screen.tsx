@@ -5,15 +5,16 @@ import ListIcon from "@mui/icons-material/List";
 import MapIcon from "@mui/icons-material/Map";
 import "./location.css";
 import BottomSheet from "../../components/BottomSheet/BottomSheet";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db, newTimestamp } from "../../firebase";
 import Map, { MapType } from "./Map";
 import { MarkerClusterer } from "@react-google-maps/api";
-import { CustomMarker } from "./Custommarker";
-import "@fontsource/public-sans";
+import CustomMarker from "./Custommarker";
 import { CircularProgress } from "@mui/material";
 import "./location.css";
 import { SquareImage } from "../../components/SquareImage/SquareImage";
+import circleImage from "../../assets/circle.png";
+import { colors } from "../../theme/colors";
 
 export interface Profiles {
   id: string | null;
@@ -74,7 +75,7 @@ const LocationScreen = () => {
             : getCurrentPosition();
         },
         (error) => {
-          console.error("Error getting current position:", error);
+          error.code === 1 ? getCurrentPosition() : console.error("Error getting current position:", error);
         }
       );
     };
@@ -177,21 +178,6 @@ const LocationScreen = () => {
     }
   };
 
-  // function isIdBlockedOrAccepted(id: any, acceptedIds: any, blockedIds: any, pendingIds: any) {
-  //   if (id) {
-  //     if (
-  //       (acceptedIds && acceptedIds.includes(id)) ||
-  //       (blockedIds && blockedIds.includes(id)) ||
-  //       (pendingIds && pendingIds.includes(id))
-  //     ) {
-  //       return true;
-  //     }
-  //   } else {
-  //     console.log("Id not found");
-  //   }
-  //   return false;
-  // }
-
   const toggleView = () => {
     setIsMapView(!isMapView);
   };
@@ -200,11 +186,11 @@ const LocationScreen = () => {
     return (
       <div
         style={{
-          height: "100%",
-          backgroundColor: "#000000",
-          paddingBottom: "40px",
-          paddingTop: "40px",
+          backgroundColor: colors.theme_color,
+          paddingBottom: "5%",
+          paddingTop: "8%",
           width: "100%",
+          height: "100%",
           flexDirection: "column",
           alignItems: "center",
         }}
@@ -213,9 +199,10 @@ const LocationScreen = () => {
           style={{
             display: "flex",
             flexWrap: "wrap",
-            paddingInline: "2%",
+            paddingInlineStart: "3%",
             // justifyContent: "center",
             justifyContent: "flex-start",
+            paddingTop: "5%",
           }}
         >
           {nearbyLocations.length === 0 ? (
@@ -296,17 +283,6 @@ const LocationScreen = () => {
                     {profile.bio}
                   </p>
                 </div>
-                {/* {bottomSheet === profile.id && bottomSheetVisible ? (
-                    <BottomSheet
-                      id={profile.id}
-                      name={profile.name}
-                      bio={profile.bio}
-                      image={profile.imageUrl}
-                      onButtonClick={handleButtonClick}
-                      visible={bottomSheetVisible}
-                      onClose={handleToggleBottomSheet}
-                    />
-                  ) : null} */}
               </div>
             ))
           )}
@@ -437,8 +413,22 @@ const LocationScreen = () => {
               maxZoom={MARKER_CLUSTER_MAX_ZOOM}
               options={{
                 zoomOnClick: true,
-                imagePath: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
-                maxZoom: 10,
+                maxZoom: 5,
+                minimumClusterSize: 2,
+                averageCenter: true,
+                styles: [
+                  {
+                    height: 50,
+                    textColor: colors.theme_color,
+                    fontFamily: "Public Sans",
+                    fontWeight: "600px",
+                    width: 50,
+                    // url: 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" height="50" width="100"%3E%3Ccircle cx="25" cy="25" r="20" stroke="black" stroke-width="3" fill="green" /%3E%3C/svg%3E',
+                    // url: 'https://camo.githubusercontent.com/e05e5ac9e0af5385e1fefccbe297a14d48d6f9bfc57d1e4e7f7a7ec0808a9b7d/68747470733a2f2f6d61726b65722e6e616e6f6b612e66722f6d61705f636c75737465722d4646303030302d3132302e737667',
+                    url: circleImage,
+                  },
+                 
+                ],
               }}
             >
               {(clusterer) => (
@@ -455,19 +445,8 @@ const LocationScreen = () => {
                         }}
                         position={transformPosition(profile.latitude, profile.longitude, profile.id)}
                         clusterer={clusterer}
-                        draggable
+                        draggable={false}
                       />
-                      {/* {bottomSheet === id && bottomSheetVisible ? (
-                          <BottomSheet
-                            id={id}
-                            name={name}
-                            bio={bio}
-                            image={imageUrl}
-                            onButtonClick={handleButtonClick}
-                            visible={bottomSheetVisible}
-                            onClose={handleToggleBottomSheet}
-                          />
-                        ) : null} */}
                     </>
                   ))}
                 </>
@@ -543,13 +522,12 @@ const LocationScreen = () => {
         <>
           <div
             style={{
-              height: "2vh",
+              height: "5%",
               width: "100%",
               position: "absolute",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
-              marginTop: "10px",
+              alignItems: "flex-end",
             }}
           >
             <div
@@ -566,7 +544,7 @@ const LocationScreen = () => {
                 fontWeight: "bold",
               }}
             >
-              <span style={{ textAlign: "center", fontSize: 14, color: "#000000" }}>Showing results within 10km area</span>
+              <span style={{ textAlign: "center", fontSize: 14, color: colors.theme_color }}>Showing results within 10km area</span>
             </div>
           </div>
           {isMapView ? dataView() : MapView()}

@@ -1,11 +1,11 @@
 import firebase from 'firebase/compat/app';
-
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { initializeApp } from "firebase/app";
 import 'firebase/compat/storage'
 import 'firebase/compat/database'
 import { getAuth } from 'firebase/auth';
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -23,6 +23,6 @@ const db = firebase.firestore();
 const storage = firebase.storage();
 const auth = getAuth();
 const newTimestamp = firebase.firestore.Timestamp.fromDate(new Date());
+const analytics = getAnalytics();
 
-
-export { db, storage, auth, app, newTimestamp }
+export { db, storage, auth, app, newTimestamp, analytics }
