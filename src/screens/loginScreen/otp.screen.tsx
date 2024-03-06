@@ -175,13 +175,12 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
       >
         <div
           style={{
-            height: "20%",
+            height: "30%",
             display: "flex",
             width: "90%",
             flexDirection: "column",
             alignItems: "flex-start",
             justifyContent: "flex-start",
-            paddingTop: "40%",
           }}
         >
           <h2
@@ -208,7 +207,7 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
         </div>
         <div
           style={{
-            height: "50%",
+            height: "30%",
             display: "flex",
             width: "90%",
             flexDirection: "column",

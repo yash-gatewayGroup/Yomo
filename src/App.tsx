@@ -32,9 +32,7 @@ const App: React.FC = () => {
             status: userIsOnline ? "online" : "away",
           })
           .then(() => {})
-          .catch((error: any) =>
-            console.error("Error updating user status:", error)
-          );
+          .catch((error: any) => console.error("Error updating user status:", error));
       }
     };
     updateUserStatus();
@@ -48,12 +46,15 @@ const App: React.FC = () => {
   return (
     <Router>
       {/* <Header /> */}
-      <div style={{height:"7%",backgroundColor:colors.theme_color}}></div>
       <div style={{ flexGrow: 1 }}>
-        <InternetConnectivity />
-        <Routes>
+      <InternetConnectivity />
+      <Routes>
           <Route path="/" element={<SplashScreen />} />
           <Route path="/login" element={token !== "null" ? <Login /> : <DashboardScreen />} />
+      </Routes>
+      <div style={{ height: "7%", backgroundColor: colors.theme_color }}></div>
+        <InternetConnectivity />
+        <Routes>
           <Route path="/otpscreen/:phoneNumber" element={token !== "null" ? <Otpscreen /> : <DashboardScreen />} />
           <Route path="/welcome" element={<WelcomeScreen />} />
           <Route path="/dashboard" element={<DashboardScreen />} />

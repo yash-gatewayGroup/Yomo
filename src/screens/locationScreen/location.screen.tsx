@@ -63,21 +63,36 @@ const LocationScreen = () => {
       //         )
       //       : getCurrentPosition();
       //   },
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentPosition({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
+      const isWebView = /(iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini)/i.test(navigator.userAgent);
+      console.log("webView",isWebView);
+      
+      if (isWebView) {
+        window.addEventListener('message', (event) => {
+          const { latitude, longitude } = event.data;
+          console.log('Received lat:', latitude, 'long:', longitude);
+          latitude &&longitude
+          ? addLatitudeLongitudeToDocuments(latitude, longitude)
+          : getCurrentPosition();
+          // Now you can use latitude and longitude as needed in your web contentF
+        });
+          
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setCurrentPosition({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
 
-          position.coords.latitude && position.coords.longitude
-            ? addLatitudeLongitudeToDocuments(position.coords.latitude, position.coords.longitude)
-            : getCurrentPosition();
-        },
-        (error) => {
-          error.code === 1 ? getCurrentPosition() : console.error("Error getting current position:", error);
-        }
-      );
+            position.coords.latitude && position.coords.longitude
+              ? addLatitudeLongitudeToDocuments(position.coords.latitude, position.coords.longitude)
+              : getCurrentPosition();
+          },
+          (error) => {
+            error.code === 1 ? getCurrentPosition() : console.error("Error getting current position:", error);
+          }
+        );
+      }
     };
     getCurrentPosition();
     // eslint-disable-next-line
@@ -427,7 +442,6 @@ const LocationScreen = () => {
                     // url: 'https://camo.githubusercontent.com/e05e5ac9e0af5385e1fefccbe297a14d48d6f9bfc57d1e4e7f7a7ec0808a9b7d/68747470733a2f2f6d61726b65722e6e616e6f6b612e66722f6d61705f636c75737465722d4646303030302d3132302e737667',
                     url: circleImage,
                   },
-                 
                 ],
               }}
             >
