@@ -64,35 +64,42 @@ const LocationScreen = () => {
       //       : getCurrentPosition();
       //   },
       const isWebView = /(iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini)/i.test(navigator.userAgent);
-      console.log("webView",isWebView);
-      
-      if (isWebView) {
-        window.addEventListener('message', (event) => {
-          const { latitude, longitude } = event.data;
-          console.log('Received lat:', latitude, 'long:', longitude);
-          latitude &&longitude
-          ? addLatitudeLongitudeToDocuments(latitude, longitude)
-          : getCurrentPosition();
-          // Now you can use latitude and longitude as needed in your web contentF
-        });
-          
-      } else {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setCurrentPosition({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            });
+      console.log("webView", isWebView);
+      window.addEventListener("message", (event) => {
+        console.log(event.data);
+        console.log(event);
+        const { latitude, longitude } = event.data;
+        console.log(latitude);
+        console.log(longitude);
+      });
+      // if (isWebView) {
+      //   window.addEventListener('message', (event) => {
+      //     console.log(event);
+      //     const { latitude, longitude } = event.data;
+      //     console.log('Received lat:', latitude, 'long:', longitude);
+      //     latitude &&longitude
+      //     ? addLatitudeLongitudeToDocuments(latitude, longitude)
+      //     : getCurrentPosition();
+      //     // Now you can use latitude and longitude as needed in your web contentF
+      //   });
 
-            position.coords.latitude && position.coords.longitude
-              ? addLatitudeLongitudeToDocuments(position.coords.latitude, position.coords.longitude)
-              : getCurrentPosition();
-          },
-          (error) => {
-            error.code === 1 ? getCurrentPosition() : console.error("Error getting current position:", error);
-          }
-        );
-      }
+      // } else {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+
+          position.coords.latitude && position.coords.longitude
+            ? addLatitudeLongitudeToDocuments(position.coords.latitude, position.coords.longitude)
+            : getCurrentPosition();
+        },
+        (error) => {
+          error.code === 1 ? getCurrentPosition() : console.error("Error getting current position:", error);
+        }
+      );
+      //}
     };
     getCurrentPosition();
     // eslint-disable-next-line
