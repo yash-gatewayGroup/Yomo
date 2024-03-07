@@ -67,7 +67,10 @@ const ProfileScreen = () => {
 
   return (
     <>
-      <Header headerName="My Profile" />
+    <div style={{height:"7%", backgroundColor:"#000000"}}>
+    <Header headerName="My Profile" />
+    </div>
+    
       {loading ? (
         <div className="loading-indicator">
           <CircularProgress />

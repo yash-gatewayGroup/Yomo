@@ -1,78 +1,217 @@
 /*Location - List View Styling */
 
 .mainLocation-container {
-    display: "flex";
-    justify-content: "center";
-    width: "100%";
-    flex-wrap: "wrap";
-    justify-content: "center";
-    align-self: "center";
+  display: "flex";
+  justify-content: "center";
+  width: "100%";
+  flex-wrap: "wrap";
+  justify-content: "center";
+  align-self: "center";
 }
 
 .mainLocation-subcontainer {
-    height: "5vh";
-    width: "100%";
-    position: "relative";
-    display: "flex";
-    justify-content: "center";
-    align-items: "center";
-    margin-top: "20px";
+  height: "5vh";
+  width: "100%";
+  position: "relative";
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+  margin-top: "20px";
 }
 
 .custom-cluster-icon {
-    border-radius: 50% !important; /* Make the cluster icon circular */
-    background-color: rgba(0, 0, 0, 0.5) !important; /* Set background color */
-    color: white !important; /* Set text color */
-    width: 40px !important; /* Adjust width */
-    height: 40px !important; /* Adjust height */
-    display: flex !important; /* Set display mode to flex */
-    justify-content: center !important; /* Center content horizontally */
-    align-items: center !important; /* Center content vertically */
-  }
-  
+  border-radius: 50% !important; /* Make the cluster icon circular */
+  background-color: rgba(0, 0, 0, 0.5) !important; /* Set background color */
+  color: white !important; /* Set text color */
+  width: 40px !important; /* Adjust width */
+  height: 40px !important; /* Adjust height */
+  display: flex !important; /* Set display mode to flex */
+  justify-content: center !important; /* Center content horizontally */
+  align-items: center !important; /* Center content vertically */
+}
+
 .loading-indicator {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #000000;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+}
 
 .top-container {
-    width: "70%";
-    background-color: "#007bff";
-    height: "2vh";
-    display: "flex";
-    justify-content: "center";
-    align-items: "center";
-    color: "#fff";
-    border-radius: "20px";
-    cursor: "pointer";
-    z-index: 1;
-    padding: "10px 20px";
-    /* position: "fixed" */;
-    margin-bottom:"20px";
+  width: "70%";
+  background-color: "#007bff";
+  height: "2vh";
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+  color: "#fff";
+  border-radius: "20px";
+  cursor: "pointer";
+  z-index: 1;
+  padding: "10px 20px";
+  /* position: "fixed" */
+  margin-bottom: "20px";
 }
 
 .container-text {
-    text-align: "center";
+  text-align: "center";
 }
 
-.image-container{
-    position: "relative";
-    margin: "10px";
-    width: "20vh";
-    overflow: "hidden";
-    height: "25vh";
-    border-radius: "25px";
+.image-container {
+  position: "relative";
+  margin: "10px";
+  width: "20vh";
+  overflow: "hidden";
+  height: "25vh";
+  border-radius: "25px";
 }
 
 .image-subcontainer {
-    border-radius: "25px";
-    overflow: "hidden";
+  border-radius: "25px";
+  overflow: "hidden";
 }
 
+.location-main-list-container {
+  background-color: #000000;
+  padding-bottom: 5%;
+  padding-top: 8%;
+  width: 100%;
+  height: 100%;
+}
+
+.list-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding-inline-start: 3%;
+  /* justify-content: center; */
+  justify-content: flex-start;
+  padding-top: 5%;
+}
+
+.no-user-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #ffffff;
+  z-index: 2;
+}
+
+.no-user-text {
+  color: #666666;
+  font-family: "Public Sans";
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.location-image-container-list {
+  width: 45%;
+  border-radius: 14px;
+  background-color: #1a1a1a;
+  overflow: hidden;
+  margin: 6px;
+}
+
+.card-container {
+  display: flex;
+  flex-direction: column;
+  margin-inline: 9%;
+  margin-block: 5%;
+}
+
+.card-name-text {
+  margin: 0;
+  font-size: 14px;
+  color: #ffffff;
+  font-family: "Public-Sans";
+  font-weight: bold;
+}
+
+.card-bio-text {
+  margin: 5px 0;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #666666;
+  font-family: "Public-Sans";
+  /* width: 100%; */
+}
+
+.location-main-view {
+  height: 5%;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.rounded-box {
+  width: 60%;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  z-index: 1;
+  padding: 7px;
+  position: fixed;
+  font-weight: bold;
+}
+
+.static-btn-text {
+  text-align: center;
+  font-size: 14px;
+  color: #000000;
+}
+
+.bottom-btn-container {
+  position: fixed;
+  bottom: 70px;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: #ffffff;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bottom-circular-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 2vh;
+}
+
+.bottom-btn-view {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.map-view {
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+
+.map-text {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.list-view {
+    display: flex;
+    align-items: center;
+    color: #000000;
+}

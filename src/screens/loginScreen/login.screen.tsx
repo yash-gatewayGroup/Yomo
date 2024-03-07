@@ -82,7 +82,7 @@ const Login: React.FC = () => {
   return (
     <div className="main">
       <Toaster position="bottom-center" reverseOrder={false} />
-      <div style={{ height: "100%", width: "100%" }}>
+      <div className="login-image-container">
         <div className="img-container">
           <img
             src={logo}

@@ -63,19 +63,6 @@ const LocationScreen = () => {
       //         )
       //       : getCurrentPosition();
       //   },
-  
-      // if (isWebView) {
-      //   window.addEventListener('message', (event) => {
-      //     console.log(event);
-      //     const { latitude, longitude } = event.data;
-      //     console.log('Received lat:', latitude, 'long:', longitude);
-      //     latitude &&longitude
-      //     ? addLatitudeLongitudeToDocuments(latitude, longitude)
-      //     : getCurrentPosition();
-      //     // Now you can use latitude and longitude as needed in your web contentF
-      //   });
-
-      // } else {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCurrentPosition({
@@ -83,7 +70,7 @@ const LocationScreen = () => {
             lng: position.coords.longitude,
           });
           console.log(position.coords.latitude, currentPosition?.lng);
-          
+
           position.coords.latitude && position.coords.longitude
             ? addLatitudeLongitudeToDocuments(position.coords.latitude, position.coords.longitude)
             : getCurrentPosition();
@@ -92,7 +79,6 @@ const LocationScreen = () => {
           error.code === 1 ? getCurrentPosition() : console.error("Error getting current position:", error);
         }
       );
-      //}
     };
     getCurrentPosition();
     // eslint-disable-next-line
@@ -199,47 +185,11 @@ const LocationScreen = () => {
 
   const dataView = () => {
     return (
-      <div
-        style={{
-          backgroundColor: colors.theme_color,
-          paddingBottom: "5%",
-          paddingTop: "8%",
-          width: "100%",
-          height: "100%",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            paddingInlineStart: "3%",
-            // justifyContent: "center",
-            justifyContent: "flex-start",
-            paddingTop: "5%",
-          }}
-        >
+      <div className="location-main-list-container">
+        <div className="list-container">
           {nearbyLocations.length === 0 ? (
-            <div
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                textAlign: "center",
-                color: "#FFFFFF",
-                zIndex: 2,
-              }}
-            >
-              <span
-                style={{
-                  color: "#666666",
-                  fontFamily: "Public Sans",
-                  fontSize: 12,
-                  fontWeight: "400",
-                }}
-              >
+            <div className="no-user-container">
+              <span className="no-user-text">
                 Quiet zone for now! <br></br>
                 No users found nearby
               </span>
@@ -249,13 +199,7 @@ const LocationScreen = () => {
               <div
                 // style={{ width: "48%" }}
                 key={index}
-                style={{
-                  width: "45%",
-                  borderRadius: "14px",
-                  backgroundColor: "#1A1A1A",
-                  overflow: "hidden",
-                  margin: "6px",
-                }}
+                className="location-image-container-list"
                 onClick={() => {
                   if (profile.id) {
                     // handleToggleBottomSheet();
@@ -264,36 +208,11 @@ const LocationScreen = () => {
                 }}
               >
                 <SquareImage imageUrl={profile.imageUrl} alt={profile.name} />
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    marginInline: "9%",
-                    marginBlock: "5%",
-                  }}
-                >
-                  <h2
-                    style={{
-                      margin: "0",
-                      fontSize: "14px",
-                      color: "#FFFFFF",
-                      fontFamily: "Public-Sans",
-                      fontWeight: "bold",
-                    }}
-                  >
+                <div className="card-container">
+                  <h2 className="card-name-text">
                     {profile.name}
                   </h2>
-                  <p
-                    style={{
-                      margin: "5px 0",
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      color: "#666666",
-                      fontFamily: "Public-Sans",
-                      // width: "100%",
-                    }}
+                  <p className="card-bio-text"
                   >
                     {profile.bio}
                   </p>
@@ -322,7 +241,7 @@ const LocationScreen = () => {
       mapFitBounds();
     }
   }, [map]);
-
+  // eslint-disable-next-line
   useEffect(() => {
     const generateOffsets = () => {
       if (mapWidth == null) {
@@ -350,7 +269,7 @@ const LocationScreen = () => {
 
     generateOffsets();
   }, [mapWidth]);
-
+  // eslint-disable-next-line
   const groupUnitsByLatAndLong = (inlineUnits: Profiles[]) => {
     const groups: Profiles[][] = [];
     inlineUnits.forEach((inlineUnit) => {
@@ -534,85 +453,23 @@ const LocationScreen = () => {
         </div>
       ) : (
         <>
-          <div
-            style={{
-              height: "5%",
-              width: "100%",
-              position: "absolute",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "flex-end",
-            }}
-          >
-            <div
-              style={{
-                width: "60%",
-                backgroundColor: "#FFFFFF",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "20px",
-                zIndex: 1,
-                padding: "7px",
-                position: "fixed",
-                fontWeight: "bold",
-              }}
-            >
-              <span style={{ textAlign: "center", fontSize: 14, color: colors.theme_color }}>Showing results within 10km area</span>
+          <div className="location-main-view">
+            <div className="rounded-box">
+              <span className="static-btn-text">Showing results within 10km area</span>
             </div>
           </div>
           {isMapView ? dataView() : MapView()}
 
-          <div
-            style={{
-              position: "fixed",
-              bottom: "70px",
-              padding: "10px 20px",
-              backgroundColor: "#FFFFFF",
-              color: "#ffffff",
-              borderRadius: "20px",
-              cursor: "pointer",
-              zIndex: 1,
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-            onClick={toggleView}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                minHeight: "2vh",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
+          <div className="bottom-btn-container" onClick={toggleView}>
+            <div className="bottom-circular-btn">
+              <div className="bottom-btn-view">
                 {isMapView ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      color: "black",
-                    }}
-                  >
+                  <div className="map-view">
                     <MapIcon />
-                    <span style={{ fontWeight: "bold", fontSize: 13 }}>Map</span>
+                    <span className="map-text">Map</span>
                   </div>
                 ) : (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      color: "black",
-                    }}
-                  >
+                  <div className="list-view">
                     <ListIcon />
                     <span>List</span>
                   </div>

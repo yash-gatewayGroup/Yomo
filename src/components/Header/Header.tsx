@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import "./Header.css";
-import SettingsIcon from "@mui/icons-material/MoreVert";
 import ArrowBackIcon from "@mui/icons-material/ArrowBackIosNew";
 import { IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +17,7 @@ interface HeaderProps {
 const Header: FC<HeaderProps> = ({ showBackButton, showOptionButton, showLogo, headerName, iconName, onOptionClick }) => {
   const navigate = useNavigate();
   return (
-    <div className="header" style={{ position: "fixed", top: 0, width: "100%", zIndex: 1000 }}>
+    <div className="header" >
         <div className="left-section">
           {showBackButton && (
             <IconButton onClick={() => navigate(-1)} style={{ color: "white" }} size="medium">
@@ -27,9 +26,9 @@ const Header: FC<HeaderProps> = ({ showBackButton, showOptionButton, showLogo, h
           )}
           <div>
             {showLogo ? (
-              <img src={Logo} style={{ width: "auto", height: "40px", paddingInlineStart: 10, paddingTop: 10 }} />
+              <img src={Logo} alt="logo-pic" className="logo"/>
             ) : (
-              <h3 style={{ paddingLeft: 15, fontSize: 18, color: "#FFFFFF", fontWeight: "bold" }}>{headerName}</h3>
+              <h3 className="header-text">{headerName}</h3>
             )}
           </div>
         </div>

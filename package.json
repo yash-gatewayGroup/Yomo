@@ -27,7 +27,7 @@
     "react-hot-toast": "^2.4.1",
     "react-otp-input": "^3.1.1",
     "react-router-dom": "^6.22.2",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -35,6 +35,23 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "webpack": {
+    "stats": {
+      "warningsFilter": [
+        "/Failed to parse source map/"
+      ]
+    }
+  },
+  "webpackMerge": {
+    "module": {
+      "rules": [
+        {
+          "enforce": "pre",
+          "loader": "source-map-loader"
+        }
+      ]
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -55,6 +72,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/google.maps": "^3.55.4",
     "@types/lodash": "^4.14.202",
     "@types/supercluster": "^7.1.3",

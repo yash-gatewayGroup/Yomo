@@ -19,6 +19,7 @@ import { colors } from "./theme/colors";
 
 const App: React.FC = () => {
   const [userStatus, setUserStatus] = useState<string>("offline");
+  // eslint-disable-next-line
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -46,22 +47,23 @@ const App: React.FC = () => {
   return (
     <Router>
       {/* <Header /> */}
+      <InternetConnectivity />
       <Routes>
-          <Route path="/" element={<SplashScreen />} />
-          <Route path="/login" element={token !== "null" ? <Login /> : <DashboardScreen />} />
-          <Route path="/otpscreen/:phoneNumber" element={token !== "null" ? <Otpscreen /> : <DashboardScreen />} />
-          <Route path="/welcome" element={<WelcomeScreen />} />
+        <Route path="/" element={<SplashScreen />} />
+        <Route path="/login" element={token !== "null" ? <Login /> : <DashboardScreen />} />
+        <Route path="/otpscreen/:phoneNumber" element={token !== "null" ? <Otpscreen /> : <DashboardScreen />} />
+        <Route path="/welcome" element={<WelcomeScreen />} />
+        <Route path="/profile" element={<ProfileScreen />} />
+        <Route path="/connection" element={<ConnectionScreen />} />
+
       </Routes>
       <div style={{ flexGrow: 1 }}>
-      <div style={{ height: "7%", backgroundColor: colors.theme_color }}></div>
-        <InternetConnectivity />
+        <div style={{ height: "7%", backgroundColor: colors.theme_color }}></div>
         <Routes>
           <Route path="/dashboard" element={<DashboardScreen />} />
           <Route path="/accountSettings" element={<AccountSettingScreen />} />
           <Route path="/chats" element={<ChatScreen />} />
-          <Route path="/connection" element={<ConnectionScreen />} />
           <Route path="/location" element={<LocationScreen />} />
-          <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/profileDetails" element={<ProfileDetail />} />
           <Route path="/blockeduser" element={<Blockeduser />} />
         </Routes>

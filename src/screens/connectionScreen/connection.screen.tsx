@@ -466,7 +466,9 @@ const ConnectionScreen = () => {
   return (
     <>
       <div className="tab-container">
+      <div style={{height:"7%", backgroundColor:"#000000"}}>
       <Header headerName="Matches" showOptionButton={true} iconName={<SearchIcon />} onOptionClick={searchClick} />
+      </div>
         <TabContext value={value}>
           <TabList onChange={handleChange}>
             <Tab

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./splash.style.css";
-import { Navigate } from "react-router-dom";
 import Logo from "../../assets/MainLogo.png";
 import { CircularProgress } from "@mui/material";
 
@@ -34,18 +33,7 @@ const SplashScreen: React.FC = () => {
           <CircularProgress color="primary" size={50} />
         </div>
       )}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "10px",
-          width: "100%",
-          textAlign: "center",
-          fontSize: '12px',
-          fontFamily: 'Public Sans',
-          color: "#444444",
-          fontWeight: "400"
-        }}
-      >
+      <div className="text-style">
         Copyright @ 2024. All Rights Reserved.
       </div>
     </div>

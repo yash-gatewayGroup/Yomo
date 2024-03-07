@@ -11,3 +11,14 @@
   width: 200px;
   height: auto;
 }
+
+.text-style {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  font-family: 'Public Sans', sans-serif;
+  color: #444444;
+  font-weight: 400;
+}

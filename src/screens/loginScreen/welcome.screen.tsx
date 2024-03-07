@@ -18,6 +18,7 @@ const WelcomeScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleImageChange = (files: File[]) => {
     setImageLoading(true);
     if (files.length > 0) {
@@ -64,7 +65,7 @@ const WelcomeScreen: React.FC = () => {
 
   const handleUpload = async () => {
     if (!image) {
-      <p style={{color:"white"}}>Please select an image.</p>;
+      <p style={{ color: "white" }}>Please select an image.</p>;
     } else if (!customerName) {
       console.error("Kindly Write the Name.");
       return;
@@ -121,158 +122,47 @@ const WelcomeScreen: React.FC = () => {
 
   return (
     <>
-      <Header showLogo={true} />
+      <Header showLogo={true} showBackButton={true} />
       <div className="welcome-container">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "flex-start",
-            fontSize: 24,
-            fontFamily: "Public Sans",
-            fontWeight: "bold",
-            color: "#FFFFFF",
-            padding: "30px",
-          }}
-        >
-          Add Your details
-        </div>
+        <div className="detail-text">Add Your details</div>
         <div className="image-upload-section">
           {!imageUrl ? (
-            <label
-              style={{
-                position: "relative",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "70%",
-                width: "70%",
-                borderRadius: "50%",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  borderRadius: "50%",
-                  width: "60%",
-                  height: "60%",
-                  border: "2px dashed #666",
-                  borderColor: "#2f2f2f",
-                }}
-              />
+            <label className="main-label">
+              <div className="dot-circle" />
               <input
                 type="file"
                 accept="image/*"
-                style={{
-                  display: "none",
-                  backgroundColor: "#FFFFFF",
-                }}
+                className="input-style"
                 onChange={(e: any) => {
                   handleImageChange(e.target.files);
                 }}
               />
-              <div
-                style={{
-                  position: "absolute",
-                  backgroundColor: "#1a1a1a",
-                  borderRadius: "50%",
-                  width: "50%",
-                  height: "50%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
+              <div className="circular-image-select">
                 <PhotoCameraRoundedIcon style={{ color: "FFFFFF" }} />
                 <div className="overlay-text">Upload photo</div>
               </div>
-              <div
-                style={{
-                  color: "#A8A8A8",
-                  alignSelf: "flex-end",
-                  textAlign: "center",
-                  fontSize: 12,
-                  fontFamily: "Public Sans",
-                  fontWeight: 400,
-                }}
-              >
+              <div className="selection-text">
                 Allowed *.jpeg, *.jpg, *.png, *.gif <br></br> Max size of 3.1 MB
               </div>
             </label>
           ) : imageLoading ? (
-            <div
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                borderRadius: "50%",
-                width: "80%",
-                height: "80%",
-                border: "2px dashed #666",
-                borderColor: "#2f2f2f",
-              }}
-            >
+            <div className="circular-progress-style">
               <CircularProgress />
             </div>
           ) : (
-            <label
-              style={{
-                position: "relative",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "60%",
-                width: "60%",
-                borderRadius: "50%",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  borderRadius: "50%",
-                  width: "80%",
-                  height: "80%",
-                  border: "2px dashed #666",
-                  borderColor: "#2f2f2f",
-                }}
-              >
-                <img
-                  src={imageUrl}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    borderRadius: "50%",
-                    width: "80%",
-                    height: "80%",
-                  }}
-                />
+            <label className="main-label">
+              <div className="dot-circle">
+                <img src={imageUrl} alt="selected-profile-pic" className="circular-image-select" />
               </div>
               <input
                 type="file"
                 accept="image/*"
-                style={{
-                  display: "none",
-                  backgroundColor: "#FFFFFF",
-                }}
+                className="input-style"
                 onChange={(e: any) => {
                   handleImageChange(e.target.files);
                 }}
               />
-              <div
-                style={{
-                  position: "absolute",
-                }}
-              >
+              <div className="edit-button">
                 <ModeEditRoundedIcon style={{ color: "FFFFFF" }} />
               </div>
             </label>
@@ -313,7 +203,6 @@ const WelcomeScreen: React.FC = () => {
             multiline={true}
             rows={3}
           />
-
           <LoginButtonComponent variant="contained" onClick={handleUpload} name="Save" isSaving={loading} />
         </div>
       </div>

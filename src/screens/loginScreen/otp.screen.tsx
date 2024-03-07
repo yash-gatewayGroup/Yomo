@@ -24,11 +24,12 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
     const verifyToken = () => {
       const token = localStorage.getItem("token");
       if (token) {
-        navigate("./dashboard")
+        navigate("./dashboard");
       }
     };
     verifyToken();
   }, []);
+  // eslint-disable-next-line
 
   useEffect(() => {
     let intervalId: any;
@@ -163,59 +164,17 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
       <Header showLogo={true} showBackButton={true} />
       <Toaster position="bottom-center" reverseOrder={false} />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-          backgroundColor: colors.theme_color,
-        }}
-      >
-        <div
-          style={{
-            height: "70%",
-            display: "flex",
-            width: "90%",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: "Public Sans",
-              fontSize: 24,
-              fontWeight: "bold",
-              color: "#FFFFFF",
-            }}
-          >
+      <div className="main-otp-container">
+        <div className="text-conatiner">
+          <h2 className="text-style-main">
             Got it, please confirm your number
           </h2>
-          <h5
-            style={{
-              fontFamily: "Public Sans",
-              color: "#A8A8A8",
-              fontWeight: "400",
-              fontSize: 14,
-            }}
-          >
+          <h5 className="small-text-style">
             We've sent a 6-digit code to your Mobile No. Please <br />
             enter the code in the box below to verify your number
           </h5>
         </div>
-        <div
-          style={{
-            height: "10%",
-            display: "flex",
-            width: "90%",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: colors.theme_color,
-          }}
-        >
+        <div className="otp-input-container">
           <OtpInput
             value={otp}
             onChange={setOtp}
@@ -237,38 +196,10 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
             }}
           />
         </div>
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <div className="verify-button-container">
           <LoginButtonComponent variant="contained" onClick={handleVerify} name="Verify" isSaving={isLoading} />
-          <button
-            style={{
-              cursor: "pointer",
-              border: "none",
-              backgroundColor: "transparent",
-              marginTop: "10px",
-              fontSize: "14px",
-              textDecoration: "underline",
-            }}
-            disabled={resendBtnDisabled}
-            onClick={resendOtp}
-          >
-            <p
-              style={{
-                color: "#666666",
-                fontWeight: "500",
-                fontSize: 16,
-                fontFamily: "Public Sans",
-              }}
-            >
-              Resend Code: {countDown > 0 && countDown < 30 && `${countDown}s`}
-            </p>
+          <button className="resend-button-style" disabled={resendBtnDisabled} onClick={resendOtp}>
+            <p className="resend-text">Resend Code: {countDown > 0 && countDown < 30 && `${countDown}s`}</p>
           </button>
         </div>
       </div>
