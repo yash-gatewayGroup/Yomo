@@ -63,15 +63,7 @@ const LocationScreen = () => {
       //         )
       //       : getCurrentPosition();
       //   },
-      const isWebView = /(iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini)/i.test(navigator.userAgent);
-      console.log("webView", isWebView);
-      window.addEventListener("message", (event) => {
-        console.log(event.data);
-        console.log(event);
-        const { latitude, longitude } = event.data;
-        console.log(latitude);
-        console.log(longitude);
-      });
+  
       // if (isWebView) {
       //   window.addEventListener('message', (event) => {
       //     console.log(event);
@@ -90,7 +82,8 @@ const LocationScreen = () => {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
-
+          console.log(position.coords.latitude, currentPosition?.lng);
+          
           position.coords.latitude && position.coords.longitude
             ? addLatitudeLongitudeToDocuments(position.coords.latitude, position.coords.longitude)
             : getCurrentPosition();

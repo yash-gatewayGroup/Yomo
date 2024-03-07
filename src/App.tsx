@@ -46,17 +46,16 @@ const App: React.FC = () => {
   return (
     <Router>
       {/* <Header /> */}
-      <div style={{ flexGrow: 1 }}>
-      <InternetConnectivity />
       <Routes>
           <Route path="/" element={<SplashScreen />} />
           <Route path="/login" element={token !== "null" ? <Login /> : <DashboardScreen />} />
+          <Route path="/otpscreen/:phoneNumber" element={token !== "null" ? <Otpscreen /> : <DashboardScreen />} />
+          <Route path="/welcome" element={<WelcomeScreen />} />
       </Routes>
+      <div style={{ flexGrow: 1 }}>
       <div style={{ height: "7%", backgroundColor: colors.theme_color }}></div>
         <InternetConnectivity />
         <Routes>
-          <Route path="/otpscreen/:phoneNumber" element={token !== "null" ? <Otpscreen /> : <DashboardScreen />} />
-          <Route path="/welcome" element={<WelcomeScreen />} />
           <Route path="/dashboard" element={<DashboardScreen />} />
           <Route path="/accountSettings" element={<AccountSettingScreen />} />
           <Route path="/chats" element={<ChatScreen />} />
