@@ -83,11 +83,9 @@ const ProfileDetail = () => {
             setInfo([data]);
             setIsLoading(false)
           } else {
-            console.log("Document data is undefined for ID:", id);
             setIsLoading(false)
           }
         } else {
-          console.log("No such document found with ID:", id);
           setIsLoading(false)
         }
       })
@@ -114,9 +112,6 @@ const ProfileDetail = () => {
         .update({
           imageUrl: imageUrl,
         })
-        .then((res) => {
-          console.log("Upload Res Succefully", res);
-        });
     }
   };
 
@@ -145,7 +140,6 @@ const ProfileDetail = () => {
                         display: "none",
                       }}
                       onChange={(e: any) => {
-                        console.log("image", e.target.files);
                         handleImageChange(e.target.files);
                       }}
                     />

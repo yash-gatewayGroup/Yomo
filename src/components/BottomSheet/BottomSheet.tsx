@@ -8,8 +8,9 @@ interface BottomSheetProps {
   id: string | undefined | null;
   name: string | undefined;
   bio: string | undefined | null;
-  onButtonClick: (id: any) => void;
+  onButtonClick: (id: any, isaccept: boolean) => void;
   image: string | undefined;
+  friendRequestId: string | undefined | null;
   visible: boolean;
   onClose?: () => void;
   isSaving?: Boolean;
@@ -17,24 +18,17 @@ interface BottomSheetProps {
 
 interface Data {
   pendingIds: string[];
+  toAcceptIds: string[];
 }
 
 const pending = async (documentId: any, idToCheck: any) => {
   try {
-    const doc = await firebase
-      .firestore()
-      .collection("customersData")
-      .doc(documentId)
-      .get();
+    const doc = await firebase.firestore().collection("customersData").doc(documentId).get();
     if (doc.exists) {
       const documentData = doc.data() as Data;
       const isIdPresent = documentData.pendingIds.includes(idToCheck);
-      console.log(
-        `ID ${idToCheck} is${isIdPresent ? "" : " not"} present in pendingIds.`
-      );
       return isIdPresent;
     } else {
-      console.log("No document found with the provided ID.");
       return false;
     }
   } catch (error) {
@@ -42,24 +36,43 @@ const pending = async (documentId: any, idToCheck: any) => {
     return false;
   }
 };
-const BottomSheet: React.FC<BottomSheetProps> = ({
-  id,
-  name,
-  bio,
-  onButtonClick,
-  image,
-  visible,
-  onClose,
-  isSaving,
-}) => {
+
+const toAccept = async (documentId: any, idToCheck: any) => {
+  try {
+    const doc = await firebase.firestore().collection("customersData").doc(documentId).get();
+    if (doc.exists) {
+      const documentData = doc.data() as Data;
+      const isIdPresent = documentData.toAcceptIds.includes(idToCheck);
+      return isIdPresent;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    return false;
+  }
+};
+
+const BottomSheet: React.FC<BottomSheetProps> = ({ id, name, bio, onButtonClick, image,friendRequestId, visible, onClose, isSaving }) => {
   const [ispending, setIsPending] = useState<Boolean>(false);
+  const [isaccept, setIsAccept] = useState<boolean>(false);
   const userId: string | null = localStorage.getItem("databaseId");
 
   if (id && userId) {
     pending(userId, id)
       .then((res) => {
         setIsPending(res);
-        console.log("checkiPending res", res);
+      })
+      .catch((err: any) => {
+        console.log("error from catch block of pending", err);
+      });
+  } else {
+    return null;
+  }
+  if (id && userId) {
+    toAccept(userId, id)
+      .then((res) => {
+        setIsAccept(res);
       })
       .catch((err: any) => {
         console.log("error from catch block of pending", err);
@@ -128,10 +141,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           </p>
         </div>
         <LoginButtonComponent
-          name={ispending ? "Pending"  : "Connect"}
+          name={ispending ? "Pending" : isaccept ? "Accept" : "Connect"}
           variant="contained"
-          onClick={() => id && onButtonClick(id)}
-          disable={!!ispending || isSaving}
+          onClick={() => id && onButtonClick(id, isaccept)}
+          disable={!!ispending || isSaving }
           style={{
             fontFamily: "Public-Sans",
             fontSize: 14,
@@ -140,7 +153,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             borderRadius: 8,
             margin: "20px auto",
             color: ispending ? colors.white : colors.theme_color,
-            backgroundColor: ispending || isSaving ? "#1F1F1F" : colors.white,
+            backgroundColor: ispending || isSaving ? "#1F1F1F" : isaccept ? "#008000" : colors.white,
           }}
           isSaving={isSaving}
         />

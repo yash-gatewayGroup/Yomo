@@ -54,13 +54,12 @@ const WelcomeScreen: React.FC = () => {
 
   const addDocumentId = async (documentId: string) => {
     const changeId: string | undefined = localStorage.getItem("userCollectionId") || undefined;
-    const dataAdd = await db.collection("users").doc(changeId).set(
+    await db.collection("users").doc(changeId).set(
       {
         documentId: documentId,
       },
       { merge: true }
     );
-    console.log(dataAdd);
   };
 
   const handleUpload = async () => {

@@ -144,6 +144,13 @@
   /* width: 100%; */
 }
 
+.toast {
+  font-size: medium;
+  font-family: "Public Sans";
+  color: #000000;
+  font-weight: 500px;
+}
+
 .location-main-view {
   height: 5%;
   width: 100%;

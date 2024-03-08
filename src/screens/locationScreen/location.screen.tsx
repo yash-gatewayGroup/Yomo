@@ -15,6 +15,7 @@ import "./location.css";
 import { SquareImage } from "../../components/SquareImage/SquareImage";
 import circleImage from "../../assets/circle.png";
 import { colors } from "../../theme/colors";
+import toast, { Toaster } from "react-hot-toast";
 
 export interface Profiles {
   id: string | null;
@@ -23,7 +24,8 @@ export interface Profiles {
   name: string | undefined;
   imageUrl: string | undefined;
   bio: string | undefined | null;
-  acceptedIds?: string[] | undefined;
+  friendRequestId?: string | undefined | null;
+  connections?: string[] | undefined;
   blockedIds?: string[] | undefined;
   pendingIds?: string[] | undefined;
 }
@@ -69,8 +71,6 @@ const LocationScreen = () => {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
-          console.log(position.coords.latitude, currentPosition?.lng);
-
           position.coords.latitude && position.coords.longitude
             ? addLatitudeLongitudeToDocuments(position.coords.latitude, position.coords.longitude)
             : getCurrentPosition();
@@ -124,7 +124,7 @@ const LocationScreen = () => {
               bio: data.bio,
               latitude: data.latitude,
               longitude: data.longitude,
-              acceptedIds: data.acceptedIds,
+              connections: data.connections,
               blockedIds: data.blockedIds,
               pendingIds: data.pendingIds,
             };
@@ -146,7 +146,7 @@ const LocationScreen = () => {
   const nearbyLocation = async (inlatitude: number, inlongitude: number, profiles: Profiles[]) => {
     let nearby: Profiles[] = [];
     try {
-      nearby = profiles.filter(({ latitude, longitude, acceptedIds, blockedIds }) => {
+      nearby = profiles.filter(({ latitude, longitude, blockedIds, connections }) => {
         if (latitude !== undefined && longitude !== undefined && longitude !== null && latitude !== null) {
           const R = 6371;
           const latDiff = (inlatitude - latitude) * (Math.PI / 180);
@@ -158,7 +158,7 @@ const LocationScreen = () => {
           const distance = R * c;
           if (distance <= 10) {
             if (id) {
-              if ((acceptedIds && acceptedIds.includes(id)) || (blockedIds && blockedIds.includes(id))) {
+              if ((connections && connections.includes(id)) || (blockedIds && blockedIds.includes(id))) {
                 return false;
               }
             }
@@ -169,7 +169,6 @@ const LocationScreen = () => {
       });
       if (nearby.length === 0) {
         setLoading(false);
-        console.log("No nearby locations found within 10 km radius.");
       }
       setLoading(false);
       setNearbyLocations(nearby);
@@ -182,7 +181,7 @@ const LocationScreen = () => {
   const toggleView = () => {
     setIsMapView(!isMapView);
   };
-
+  
   const dataView = () => {
     return (
       <div className="location-main-list-container">
@@ -209,13 +208,8 @@ const LocationScreen = () => {
               >
                 <SquareImage imageUrl={profile.imageUrl} alt={profile.name} />
                 <div className="card-container">
-                  <h2 className="card-name-text">
-                    {profile.name}
-                  </h2>
-                  <p className="card-bio-text"
-                  >
-                    {profile.bio}
-                  </p>
+                  <h2 className="card-name-text">{profile.name}</h2>
+                  <p className="card-bio-text">{profile.bio}</p>
                 </div>
               </div>
             ))
@@ -225,8 +219,7 @@ const LocationScreen = () => {
     );
   };
 
-  const hasLongLat = (inlineUnit: Profiles): inlineUnit is Profiles & { latitude: number; longitude: number } =>
-    inlineUnit.latitude != null && inlineUnit.longitude != null;
+  const hasLongLat = (inlineUnit: Profiles): inlineUnit is Profiles & { latitude: number; longitude: number } => inlineUnit.latitude != null && inlineUnit.longitude != null;
 
   useEffect(() => {
     function mapFitBounds() {
@@ -242,6 +235,7 @@ const LocationScreen = () => {
     }
   }, [map]);
   // eslint-disable-next-line
+
   useEffect(() => {
     const generateOffsets = () => {
       if (mapWidth == null) {
@@ -270,6 +264,7 @@ const LocationScreen = () => {
     generateOffsets();
   }, [mapWidth]);
   // eslint-disable-next-line
+
   const groupUnitsByLatAndLong = (inlineUnits: Profiles[]) => {
     const groups: Profiles[][] = [];
     inlineUnits.forEach((inlineUnit) => {
@@ -308,7 +303,6 @@ const LocationScreen = () => {
       if (!mapZoomLevel || !markerOffsets[id] || mapZoomLevel <= MARKER_CLUSTER_MAX_ZOOM) {
         return { lat, lng };
       }
-
       return {
         lat: lat + markerOffsets[id].lat,
         lng: lng + markerOffsets[id].lng,
@@ -372,7 +366,7 @@ const LocationScreen = () => {
                         key={profile.id}
                         onClick={() => {
                           if (id) {
-                            handleToggleBottomSheet();
+                            // handleToggleBottomSheet();
                             setBottomSheet(profile);
                           }
                         }}
@@ -393,18 +387,18 @@ const LocationScreen = () => {
 
   const createRequest = async (userId: string, receiverId: string) => {
     if (id) {
-      const customerDataRef = db.collection("customersData").doc(receiverId);
+      const customerDataRef = db.collection("customersData").doc(userId);
       const customerDataSnapshot = await customerDataRef.get();
       if (customerDataSnapshot.exists) {
         const customerData = customerDataSnapshot.data();
         const existingIds = customerData?.pendingIds || [];
-        const updatedIdsSet = new Set([...existingIds, userId]);
+        const updatedIdsSet = new Set([...existingIds, receiverId]);
         const updatedIds = Array.from(updatedIdsSet);
         await customerDataRef.update({
           pendingIds: updatedIds,
         });
       } else {
-        const updatedIds = [userId];
+        const updatedIds = [receiverId];
         await customerDataRef.set(
           {
             pendingIds: updatedIds,
@@ -415,28 +409,133 @@ const LocationScreen = () => {
     } else console.log("Error id not found");
   };
 
-  const handleButtonClick = async (receiverId: string) => {
-    setIsSaving(true);
+  const createAcceptRequest = async (userId: string, receiverId: string) => {
+    if (id) {
+      const customerDataRef = db.collection("customersData").doc(userId);
+      const customerDataSnapshot = await customerDataRef.get();
+      if (customerDataSnapshot.exists) {
+        const customerData = customerDataSnapshot.data();
+        const existingIds = customerData?.toAcceptIds || [];
+        const updatedIdsSet = new Set([...existingIds, receiverId]);
+        const updatedIds = Array.from(updatedIdsSet);
+        await customerDataRef.update({
+          toAcceptIds: updatedIds,
+        });
+      } else {
+        const updatedIds = [receiverId];
+        await customerDataRef.set(
+          {
+            toAcceptIds: updatedIds,
+          },
+          { merge: true }
+        );
+      }
+    } else console.log("Error id not found");
+  };
+
+  // Add to 'connections' in 'customerData'
+  const updateConnectionsInUser = async (userId: string, idToAddInConnection: string) => {
+    if (id) {
+      const customerDataRef = db.collection("customersData").doc(userId);
+      const customerDataSnapshot = await customerDataRef.get();
+      if (customerDataSnapshot.exists) {
+        const customerData = customerDataSnapshot.data();
+        const existingConnections = customerData?.connections || [];
+        if (!existingConnections.includes(idToAddInConnection))
+          await customerDataRef.update({
+            connections: [...existingConnections, idToAddInConnection],
+          });
+      }
+    }
+  };
+
+  // Remove customerId from 'pendingIds' in 'customersData'
+  const updatePendingIdsInUser = async (userId: string, idToRemove: string) => {
+    const docRef = db.collection("customersData").doc(userId);
+    const docSnapshot = await docRef.get();
+    if (docSnapshot.exists) {
+      const data = docSnapshot.data();
+      const updatedPendingIds = data?.pendingIds.filter((id: any) => id !== idToRemove);
+      await docRef.update({
+        pendingIds: updatedPendingIds,
+      });
+    } else {
+      console.log("Document does not exist.");
+    }
+  };
+
+  // Remove customerId from 'isAcceptids' in 'customersData'
+  const updateAcceptIdsInUser = async (userId: string, idToRemove: string) => {
+    const docRef = db.collection("customersData").doc(userId);
+    const docSnapshot = await docRef.get();
+    if (docSnapshot.exists) {
+      const data = docSnapshot.data();
+      const updatedPendingIds = data?.toAcceptIds.filter((id: any) => id !== idToRemove);
+      await docRef.update({
+        toAcceptIds: updatedPendingIds,
+      });
+    } else {
+      console.log("Document does not exist.");
+    }
+  };
+
+  // Delete Friend Request from 'friendRequests'
+  const deleteFriendRequest = async (friendRequestId: string) => {
+    if (friendRequestId) await db.collection("friendRequests").doc(friendRequestId).delete();
+  };
+
+  //Find the Id from the FirendReuests
+  const findCollectionIdBySenderId = async (receiverId: string) => {
+    const collectionRef = db.collection("friendRequests");
+    try {
+      const querySnapshot = await collectionRef.get();
+      for (const docSnapshot of querySnapshot.docs) {
+        const data = docSnapshot.data();
+        if (data.senderId === receiverId) {
+          deleteFriendRequest(docSnapshot.id);
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Error finding collection ID:", error);
+      return null;
+    }
+  };
+
+  const handleButtonClick = async (receiverId: string, isaccept: Boolean) => {
     //creating the new table for maintaining the connection requests
+    setIsSaving(true);
     try {
       if (id && receiverId) {
-        console.log(id);
-        console.log(receiverId);
-        await db
-          .collection("friendRequests")
-          .add({
-            senderId: id,
-            receiverId: receiverId,
-            reqStatus: "pending",
-            timestamp: newTimestamp,
-          })
-          .then(async (res) => {
-            if (res) {
-              await createRequest(id, receiverId);
-              await createRequest(receiverId, id);
-              setIsSaving(false);
-            }
-          });
+        if (isaccept === true) {
+          await updateConnectionsInUser(id, receiverId);
+          await updateConnectionsInUser(receiverId, id);
+          await updateAcceptIdsInUser(id, receiverId);
+          await updatePendingIdsInUser(receiverId, id);
+          await updatePendingIdsInUser(id, receiverId);
+          await findCollectionIdBySenderId(receiverId);
+          setIsSaving(false);
+          handleToggleBottomSheet()
+          toast.success("Connection Accepted Sucessful, Kindly check connection screen")
+        } else {
+          await db
+            .collection("friendRequests")
+            .add({
+              senderId: id,
+              receiverId: receiverId,
+              reqStatus: "pending",
+              timestamp: newTimestamp,
+            })
+            .then(async (res) => {
+              if (res) {
+                await createRequest(id, receiverId);
+                await createAcceptRequest(receiverId, id);
+                setIsSaving(false);
+                handleToggleBottomSheet()
+                toast.success("connection request sent sucessfully, kindly wait to be accepted")
+              }
+            });
+        }
       }
     } catch (error) {
       console.error("Error sending friend request:", error);
@@ -447,6 +546,9 @@ const LocationScreen = () => {
   return (
     <>
       <Header showLogo={true} />
+      <div className="toast">
+      <Toaster position="top-center" reverseOrder={false} />
+      </div>
       {loading ? (
         <div className="loading-indicator">
           <CircularProgress />
@@ -483,6 +585,7 @@ const LocationScreen = () => {
             name={bottomSheet?.name}
             bio={bottomSheet?.bio}
             image={bottomSheet?.imageUrl}
+            friendRequestId={bottomSheet?.friendRequestId}
             onButtonClick={handleButtonClick}
             visible={Boolean(bottomSheet?.id)}
             onClose={handleToggleBottomSheet}

@@ -61,7 +61,6 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
           })
           .then((docRef: any) => {
             const userCollectionId = docRef.id;
-            console.log(userCollectionId);
             localStorage.setItem("token", user.accessToken);
             localStorage.setItem("userCollectionId", userCollectionId);
             setIsLoading(false);
@@ -93,7 +92,6 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
             })
             .then((docRef: any) => {
               const userCollectionId = docRef.id;
-              console.log(userCollectionId);
               localStorage.setItem("token", user.accessToken);
               localStorage.setItem("userCollectionId", userCollectionId);
               navigate("/welcome");

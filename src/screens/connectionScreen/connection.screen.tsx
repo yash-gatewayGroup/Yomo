@@ -67,6 +67,21 @@ const ConnectionScreen = () => {
     }
   };
 
+  // Remove customerId from 'toAcceptIds' in 'customerData'
+  const updatetoAcceptIdsInUser = async (userId: string, idToRemove: string) => {
+    const docRef = db.collection("customersData").doc(userId);
+    const docSnapshot = await docRef.get();
+    if (docSnapshot.exists) {
+      const data = docSnapshot.data();
+      const updatedPendingIds = data?.toAcceptIds.filter((id: any) => id !== idToRemove);
+      await docRef.update({
+        toAcceptIds: updatedPendingIds,
+      });
+    } else {
+      console.log("Document does not exist.");
+    }
+  };
+
   // Add to 'connections' in 'customerData'
   const updateConnectionsInUser = async (userId: string, idToAddInConnection: string) => {
     if (id) {
@@ -296,7 +311,7 @@ const ConnectionScreen = () => {
       if (friendRequestId && receiverId && userId) {
         setIsSavingData(true);
         await updatePendingIdsInUser(userId, receiverId);
-        await updatePendingIdsInUser(receiverId, userId);
+        await updatetoAcceptIdsInUser(receiverId, userId);
         await deleteFriendRequest(friendRequestId);
         setIsSavingData(false);
       }
@@ -393,7 +408,6 @@ const ConnectionScreen = () => {
           customerDataPromises.push(promise);
         }
         const resolvedData = await Promise.all(customerDataPromises);
-        console.log("Customer Data:", resolvedData);
         return resolvedData;
       } catch (error) {
         console.error("Error fetching customer data:", error);
