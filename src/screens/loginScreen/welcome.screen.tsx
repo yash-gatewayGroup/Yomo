@@ -151,7 +151,12 @@ const WelcomeScreen: React.FC = () => {
           ) : (
             <label className="main-label">
               <div className="dot-circle">
-                <img src={imageUrl} alt="selected-profile-pic" className="circular-image-select" />
+                <img src={imageUrl} alt="selected-profile-pic" style={{
+                  position:"absolute",
+                  borderRadius:"50%",
+                  width:"100%",
+                  height:'100%'
+                }} />
               </div>
               <input
                 type="file"
