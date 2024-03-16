@@ -16,6 +16,8 @@ import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 import Message from "../../components/Message/Message";
 import firebase from "firebase/compat/app";
 import EmojiPicker from "emoji-picker-react";
+import toast, { Toaster } from "react-hot-toast";
+import { colors } from "../../theme/colors";
 
 interface UserData {
   id: string;
@@ -145,14 +147,29 @@ const MessageScreen: React.FC<verificationParams> = () => {
   //for displaying the image after selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      if (e.target.files.length > 0) {
-        setImage(e.target.files[0]);
-        const reader = new FileReader();
-        reader.readAsDataURL(e.target.files[0]);
-        reader.onload = () => {
-          setImageUrl(reader.result as string);
-        };
+      const file = e.target.files[0];
+      // Check file size
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("File size exceeds 2 MB. Please select a smaller file.", {
+          style: { fontFamily: "Public Sans", color: colors.theme_color, fontWeight: "400px", fontSize: "14px" },
+        });
+        return;
       }
+      // Check file type
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Invalid file type. Please select a JPEG, JPG, PNG, or GIF image.", {
+          style: { fontFamily: "Public Sans", color: colors.theme_color, fontWeight: "400px", fontSize: "14px" },
+        });
+        return;
+      }
+      // Proceed to set the image and URL
+      setImage(file);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setImageUrl(reader.result as string);
+      };
     }
   };
 
@@ -325,6 +342,7 @@ const MessageScreen: React.FC<verificationParams> = () => {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="main-message-container">
         <div className="message-icon">
           <IconButton onClick={goBack} style={{ color: "white" }} size="medium">
@@ -460,7 +478,7 @@ const MessageScreen: React.FC<verificationParams> = () => {
           <div className="add-attachment">
             {isLoading ? (
               <div className="message-send-loader">
-              <CircularProgress style={{color:"#ffffff" }} size={25} />
+                <CircularProgress style={{ color: "#ffffff" }} size={25} />
               </div>
             ) : (
               <IconButton aria-label="send" onClick={handleSubmit}>

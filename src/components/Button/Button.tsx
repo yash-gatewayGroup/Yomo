@@ -12,14 +12,7 @@ interface LoginButtonProps {
   isSaving?: Boolean;
 }
 
-const LoginButtonComponent: React.FC<LoginButtonProps> = ({
-  onClick,
-  disable,
-  name,
-  style,
-  variant,
-  isSaving
-}) => {
+const LoginButtonComponent: React.FC<LoginButtonProps> = ({ onClick, disable, name, style, variant, isSaving }) => {
   return (
     <Button
       variant={variant}
@@ -27,8 +20,8 @@ const LoginButtonComponent: React.FC<LoginButtonProps> = ({
       disabled={disable}
       style={{
         width: "90%",
-        backgroundColor: colors.white,
-        color: colors.theme_color,
+        backgroundColor: disable ? "#808080" : colors.white,
+        color: disable ? colors.white : colors.theme_color,
         fontFamily: "Public Sans",
         fontSize: 15,
         fontWeight: "bold",
@@ -39,9 +32,7 @@ const LoginButtonComponent: React.FC<LoginButtonProps> = ({
         ...style,
       }}
     >
-      {isSaving ? (
-        <CircularProgress size={20} style={{ justifyContent:"center",alignContent:"center" }} />
-      ) : null}
+      {isSaving ? <CircularProgress size={20} style={{ justifyContent: "center", alignContent: "center" }} /> : null}
       {isSaving ? "" : name}
     </Button>
   );

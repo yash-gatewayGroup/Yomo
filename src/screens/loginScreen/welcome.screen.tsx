@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import PhotoCameraRoundedIcon from "@mui/icons-material/PhotoCameraRounded";
 import ModeEditRoundedIcon from "@mui/icons-material/ModeEditRounded";
+import toast, { Toaster } from "react-hot-toast";
+import { colors } from "../../theme/colors";
 
 const WelcomeScreen: React.FC = () => {
   const [customerName, setCustomerName] = useState<string>("");
@@ -22,13 +24,29 @@ const WelcomeScreen: React.FC = () => {
   const handleImageChange = (files: File[]) => {
     setImageLoading(true);
     if (files.length > 0) {
-      setImage(files[0]);
+      const file = files[0];
+      if (file.size > 3.1 * 1024 * 1024) {
+        toast.success("File size exceeds 3.1 MB. Please select a smaller image.", {
+          style: { fontFamily: "Public Sans", color: colors.theme_color, fontWeight: "400px", fontSize: "14px" },
+        });
+        setImageLoading(false);
+        return;
+      }
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.success("Invalid file type. Please select a JPEG, JPG, PNG, or GIF image.", {
+          style: { fontFamily: "Public Sans", color: colors.theme_color, fontWeight: "400px", fontSize: "14px" },
+        });
+        setImageLoading(false);
+        return;
+      }
+      setImage(file);
       const reader = new FileReader();
-      reader.readAsDataURL(files[0]);
+      reader.readAsDataURL(file);
       reader.onload = () => {
         setImageUrl(reader.result as string);
+        setImageLoading(false);
       };
-      setImageLoading(false);
     }
   };
 
@@ -151,12 +169,16 @@ const WelcomeScreen: React.FC = () => {
           ) : (
             <label className="main-label">
               <div className="dot-circle">
-                <img src={imageUrl} alt="selected-profile-pic" style={{
-                  position:"absolute",
-                  borderRadius:"50%",
-                  width:"100%",
-                  height:'100%'
-                }} />
+                <img
+                  src={imageUrl}
+                  alt="selected-profile-pic"
+                  style={{
+                    position: "absolute",
+                    borderRadius: "50%",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
               </div>
               <input
                 type="file"
@@ -171,6 +193,7 @@ const WelcomeScreen: React.FC = () => {
               </div>
             </label>
           )}
+          <Toaster position="bottom-center" reverseOrder={false} />
         </div>
 
         <div className="form-section">

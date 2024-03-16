@@ -7,6 +7,8 @@ import { db, newTimestamp, storage } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import PhotoCameraRoundedIcon from "@mui/icons-material/PhotoCameraRounded";
+import toast, { Toaster } from "react-hot-toast";
+import { colors } from "../../theme/colors";
 
 interface UserInfo {
   bio: string;
@@ -21,7 +23,7 @@ const ProfileDetail = () => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [image, setImage] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
-
+  const [isImageLoading, setIsImageLoading] = useState<Boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,35 +41,77 @@ const ProfileDetail = () => {
   }, [info]);
 
   const handleImageChange = (files: File[]) => {
+    setIsImageLoading(true);
     if (files.length > 0) {
-      setImage(files[0]);
+      setIsImageLoading(false);
+      const file = files[0];
+      if (file.size > 3.1 * 1024 * 1024) {
+        console.log("File size exceeds 3.1 MB. Please select a smaller image.");
+
+        toast.error("File size exceeds 3.1 MB. Please select a smaller image.");
+        setIsImageLoading(false);
+        return;
+      }
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(file.type)) {
+        console.log("File size exceeds 3.1 MB. Please select a smaller image.");
+        toast.error("Invalid file type. Please select a JPEG, JPG, PNG, or GIF image.", {
+          style: { fontFamily: "Public Sans", color: "#ffffff", fontWeight: "400px", fontSize: "14px" },
+        });
+        setIsImageLoading(false);
+        return;
+      }
       const reader = new FileReader();
-      reader.readAsDataURL(files[0]);
+      reader.readAsDataURL(file);
       reader.onload = () => {
         setImageUrl(reader.result as string);
+        setIsImageLoading(false);
       };
-      handleImageUpload();
+      setImage(files[0]);
     }
   };
 
   const updateUser = async () => {
     setIsLoading(true);
-    const id: any = localStorage.getItem("databaseId");
-    db.collection("customersData")
-      .doc(id)
-      .update({
-        bio: customerBio,
-        name: customerName,
-        timeStamp: newTimestamp,
-      })
-      .then((res) => {
-        navigate(-1);
-        setIsLoading(false);
-      })
-      .catch((err: any) => {
-        console.log("Error", err);
-        setIsLoading(false);
-      });
+    if (!image) {
+      <p style={{ color: "white" }}>Please select an image.</p>;
+    } else if (!customerName) {
+      console.error("Kindly Write the Name.");
+      return;
+    } else if (!customerBio) {
+      console.error("Kindly Write the Bio.");
+      return;
+    } else {
+      setIsLoading(true);
+      try {
+        const storageRef = storage.ref(`images/${image.name}`);
+        const uploadTask = storageRef.put(image);
+        uploadTask.on("state_changed", (snapshot: any) => {
+          console.log("snapshot", snapshot);
+        });
+        await uploadTask;
+        const imageUrl = await storageRef.getDownloadURL();
+        const id: any = localStorage.getItem("databaseId");
+        db.collection("customersData")
+          .doc(id)
+          .update({
+            bio: customerBio,
+            name: customerName,
+            imageUrl: imageUrl,
+            timeStamp: newTimestamp,
+          })
+          .then((res) => {
+            navigate(-1);
+            setIsLoading(false);
+          })
+          .catch((err: any) => {
+            console.log("Error", err);
+            setIsLoading(false);
+          });
+      } catch {
+        return null;
+      }
+    }
   };
 
   const fetchData = (id: string) => {
@@ -95,24 +139,6 @@ const ProfileDetail = () => {
       });
   };
 
-  const handleImageUpload = async () => {
-    if (!image) {
-      console.error("No image selected.");
-    } else {
-      const storageRef = storage.ref(`images/${image.name}`);
-      const uploadTask = storageRef.put(image);
-      uploadTask.on("state_changed", (snapshot: any) => {
-        console.log("snapshot", snapshot);
-      });
-      await uploadTask;
-      const imageUrl = await storageRef.getDownloadURL();
-      const id: any = localStorage.getItem("databaseId");
-      db.collection("customersData").doc(id).update({
-        imageUrl: imageUrl,
-      });
-    }
-  };
-
   return (
     <>
       <div style={{ height: "7%", backgroundColor: "#000000" }}>
@@ -130,20 +156,24 @@ const ProfileDetail = () => {
               <div className="image-overlay">
                 <img src={data.imageUrl} className="image-wrapper img" />
                 <div className="overlay-content">
-                  <label>
-                    <PhotoCameraRoundedIcon className="overlay-image" />
-                    <div className="overlay-text">Update photo</div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      style={{
-                        display: "none",
-                      }}
-                      onChange={(e: any) => {
-                        handleImageChange(e.target.files);
-                      }}
-                    />
-                  </label>
+                  {isImageLoading ? (
+                    <CircularProgress style={{ color: "#ffffff" }} />
+                  ) : (
+                    <label>
+                      <PhotoCameraRoundedIcon className="overlay-image" />
+                      <div className="overlay-text">Update photo</div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{
+                          display: "none",
+                        }}
+                        onChange={(e: any) => {
+                          handleImageChange(e.target.files);
+                        }}
+                      />
+                    </label>
+                  )}
                 </div>
               </div>
             ) : (
@@ -154,6 +184,7 @@ const ProfileDetail = () => {
           </div>
 
           <div className="textBox-container">
+          <Toaster position="bottom-center" reverseOrder={false} />
             <TextBoxComponent
               value={customerName}
               onChange={(value) => setCustomerName(value)}
@@ -179,9 +210,15 @@ const ProfileDetail = () => {
               multiline={true}
               rows={3}
             />
-            <div className="login-button-container">
-              <LoginButtonComponent variant="contained" onClick={updateUser} name="Update" />
-            </div>
+            {!customerBio || !customerName || !image ? (
+              <div className="login-button-container">
+                <LoginButtonComponent variant="contained" onClick={updateUser} name="Update" disable={true} />
+              </div>
+            ) : (
+              <div className="login-button-container">
+                <LoginButtonComponent variant="contained" onClick={updateUser} name="Update" isSaving={isLoading} />
+              </div>
+            )}
           </div>
         </div>
       ))}
