@@ -98,7 +98,9 @@ const Blockeduser = () => {
 
   return (
     <>
+    <div className="header-container">
       <Header showBackButton={true} headerName="Blocked Users" />
+      </div>
       {loading ? (
         <div className="loading-indicator">
           <CircularProgress />
