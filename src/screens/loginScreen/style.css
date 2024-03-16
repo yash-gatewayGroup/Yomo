@@ -37,6 +37,14 @@
   margin: 0;
 }
 
+.otp-text-container {
+  height: 70%;
+  width: 90%;
+  flex-direction: column;
+  justify-content: center;
+  display: flex
+}
+
 .otp-input {
   height: 100%;
   width: 70%;

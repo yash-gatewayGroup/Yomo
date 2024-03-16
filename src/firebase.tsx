@@ -22,7 +22,7 @@ const app = initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
 const auth = getAuth();
-const newTimestamp = firebase.firestore.Timestamp.fromDate(new Date());
+const newTimestamp = firebase.firestore.Timestamp.now();
 const analytics = getAnalytics();
 
 export { db, storage, auth, app, newTimestamp, analytics }

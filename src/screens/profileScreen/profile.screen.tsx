@@ -67,10 +67,10 @@ const ProfileScreen = () => {
 
   return (
     <>
-    <div style={{height:"7%", backgroundColor:"#000000"}}>
-    <Header headerName="My Profile" />
-    </div>
-    
+      <div style={{ height: "6%", backgroundColor: "#000000" }}>
+        <Header headerName="My Profile" />
+      </div>
+
       {loading ? (
         <div className="loading-indicator">
           <CircularProgress />
@@ -175,7 +175,9 @@ const ProfileScreen = () => {
           </div>
         </>
       )}
-      <BottomNav screenValue="profile" />
+      <div style={{ height: "6%", backgroundColor: "#000000" }}>
+        <BottomNav screenValue="profile" />
+      </div>
     </>
   );
 };

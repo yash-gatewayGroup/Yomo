@@ -2,6 +2,133 @@
   text-align: center;
 }
 
+.search-bar-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-self: center;
+  height: 6%;
+  background-color: #000000;
+  padding-top: 5px;
+}
+
+.main-chat-container {
+  height: 88%;
+  background-color: #000000;
+  overflow-y: auto;
+}
+
+.bottom-nav-container {
+  height: 6%;
+  background-color: #000000;
+}
+
+.chat-container {
+  height: 87%;
+  background-color: #000000;
+  overflow-y: auto;
+  padding-bottom: 5px;
+}
+
+.message-bottom-nav {
+  height: 6%;
+  background-color: #000000;
+  display: flex;
+  justify-content: center;
+}
+
+.emoji-container {
+  position: absolute;
+  bottom: 40px;
+  left: 20px;
+  width: 90%;
+  z-index: 1000;
+}
+
+.chat-text-container {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-send-loader{
+  width:35px;
+  justify-content:center; 
+  align-self:center;
+}
+.fab-icon {
+  position: fixed;
+  bottom: 9vh;
+  right: 2vh;
+  background-color: #ffffff;
+  color: #000000;
+}
+.no-data-text {
+  color: #ffffff;
+  font-family: "Public Sans";
+  font-size: 14px;
+  font-weight: 400;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.search-bar-paper {
+  display: flex;
+  align-self: center;
+}
+
+.header-container {
+  height: 6%;
+  background-color: #000000;
+}
+.me {
+  background: #1a1a1a;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: "Public Sans";
+  align-self: flex-end;
+}
+.friend {
+  background: #1a1a1a;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: "Public Sans";
+  align-self: flex-end;
+}
+
+.message_wrapper {
+  padding: 0px;
+}
+
+.message_wrapper img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.message_wrapper p {
+  padding: 20px;
+  display: inline-block;
+  text-align: left;
+  border-radius: 8px;
+  width: 80%;
+}
+
+.message_wrapper small {
+  display: inline-block;
+  margin-top: 15px;
+  opacity: 0.8;
+}
+
+.message_wrapper.own {
+  text-align: right;
+  flex-direction: column;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

@@ -480,48 +480,52 @@ const ConnectionScreen = () => {
   return (
     <>
       <div className="tab-container">
-      <div style={{height:"7%", backgroundColor:"#000000"}}>
-      <Header headerName="Matches" showOptionButton={true} iconName={<SearchIcon />} onOptionClick={searchClick} />
+        <div style={{ height: "7%" }}>
+          <Header headerName="Matches" showOptionButton={true} iconName={<SearchIcon />} onOptionClick={searchClick} />
+        </div>
+        <div style={{ height: "86%" }}>
+          <TabContext value={value}>
+            <TabList onChange={handleChange}>
+              <Tab
+                value="received"
+                label={
+                  <div className="main-received-box">
+                    <div className="tab-text">Received</div>
+                    {received !== 0 && <div className="received-box">{received}</div>}
+                  </div>
+                }
+              />
+              <Tab
+                label="Sent"
+                value="sent"
+                className="tab-text"
+                style={{
+                  color: "#FFFFFF",
+                  fontWeight: "400",
+                  fontSize: 14,
+                  fontFamily: "Public Sans",
+                }}
+              />
+              <Tab
+                label="My Connection"
+                value="MyConnection"
+                style={{
+                  color: "#FFFFFF",
+                  fontWeight: "400",
+                  fontSize: 14,
+                  fontFamily: "Public Sans",
+                }}
+              />
+            </TabList>
+            <TabPanel value="received">{Received()}</TabPanel>
+            <TabPanel value="sent">{Sender()}</TabPanel>
+            <TabPanel value="MyConnection">{Connection()}</TabPanel>
+          </TabContext>
+        </div>
       </div>
-        <TabContext value={value}>
-          <TabList onChange={handleChange}>
-            <Tab
-              value="received"
-              label={
-                <div className="main-received-box">
-                  <div className="tab-text">Received</div>
-                  {received !== 0 && <div className="received-box">{received}</div>}
-                </div>
-              }
-            />
-            <Tab
-              label="Sent"
-              value="sent"
-              className="tab-text"
-              style={{
-                color: "#FFFFFF",
-                fontWeight: "400",
-                fontSize: 14,
-                fontFamily: "Public Sans",
-              }}
-            />
-            <Tab
-              label="My Connection"
-              value="MyConnection"
-              style={{
-                color: "#FFFFFF",
-                fontWeight: "400",
-                fontSize: 14,
-                fontFamily: "Public Sans",
-              }}
-            />
-          </TabList>
-          <TabPanel value="received">{Received()}</TabPanel>
-          <TabPanel value="sent">{Sender()}</TabPanel>
-          <TabPanel value="MyConnection">{Connection()}</TabPanel>
-        </TabContext>
+      <div style={{ height: "6%" }}>
+        <BottomNav screenValue="connection" />
       </div>
-      <BottomNav screenValue="connection" />
     </>
   );
 };

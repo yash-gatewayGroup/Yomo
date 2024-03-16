@@ -71,7 +71,7 @@ const ProfileDetail = () => {
   };
 
   const fetchData = (id: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     Firebase.firestore()
       .collection("customersData")
       .doc(id)
@@ -81,17 +81,17 @@ const ProfileDetail = () => {
           const data = doc.data() as UserInfo | undefined;
           if (data) {
             setInfo([data]);
-            setIsLoading(false)
+            setIsLoading(false);
           } else {
-            setIsLoading(false)
+            setIsLoading(false);
           }
         } else {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       })
       .catch((error) => {
         console.error("Error getting document:", error);
-        setIsLoading(false)
+        setIsLoading(false);
       });
   };
 
@@ -107,17 +107,17 @@ const ProfileDetail = () => {
       await uploadTask;
       const imageUrl = await storageRef.getDownloadURL();
       const id: any = localStorage.getItem("databaseId");
-      db.collection("customersData")
-        .doc(id)
-        .update({
-          imageUrl: imageUrl,
-        })
+      db.collection("customersData").doc(id).update({
+        imageUrl: imageUrl,
+      });
     }
   };
 
   return (
     <>
-      <Header showBackButton={true} headerName="My Profile Details" />
+      <div style={{ height: "7%", backgroundColor: "#000000" }}>
+        <Header showBackButton={true} headerName="My Profile Details" />
+      </div>
       {isLoading && (
         <div className="loading-indicator">
           <CircularProgress />
@@ -180,7 +180,7 @@ const ProfileDetail = () => {
               rows={3}
             />
             <div className="login-button-container">
-              <LoginButtonComponent variant="contained" onClick={updateUser} name="Update"/>
+              <LoginButtonComponent variant="contained" onClick={updateUser} name="Update" />
             </div>
           </div>
         </div>

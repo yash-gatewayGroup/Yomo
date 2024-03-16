@@ -16,6 +16,7 @@ import Blockeduser from "./screens/profileScreen/blockedUser";
 import { db } from "./firebase";
 import InternetConnectivity from "./components/InternetConnectivity/InternetConnectivity";
 import { colors } from "./theme/colors";
+import MessageScreen from "./screens/chatScreen/messageScreen";
 
 const App: React.FC = () => {
   const [userStatus, setUserStatus] = useState<string>("offline");
@@ -55,17 +56,17 @@ const App: React.FC = () => {
         <Route path="/welcome" element={<WelcomeScreen />} />
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/connection" element={<ConnectionScreen />} />
-
+        <Route path="/chats" element={<ChatScreen />} />
+        <Route path="/dashboard" element={<DashboardScreen />} />
+        <Route path="/message/:connectionId" element={<MessageScreen />} />
+        <Route path="/profileDetails" element={<ProfileDetail />} />
+        <Route path="/blockeduser" element={<Blockeduser />} />
       </Routes>
       <div style={{ flexGrow: 1 }}>
-        <div style={{ height: "7%", backgroundColor: colors.theme_color }}></div>
+        <div style={{ height: "6%", backgroundColor: colors.theme_color }}></div>
         <Routes>
-          <Route path="/dashboard" element={<DashboardScreen />} />
           <Route path="/accountSettings" element={<AccountSettingScreen />} />
-          <Route path="/chats" element={<ChatScreen />} />
           <Route path="/location" element={<LocationScreen />} />
-          <Route path="/profileDetails" element={<ProfileDetail />} />
-          <Route path="/blockeduser" element={<Blockeduser />} />
         </Routes>
       </div>
       {/* <BottomNav /> */}

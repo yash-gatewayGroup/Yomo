@@ -163,7 +163,7 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
       <Toaster position="bottom-center" reverseOrder={false} />
 
       <div className="main-otp-container">
-        <div className="text-conatiner">
+        <div className="otp-text-container">
           <h2 className="text-style-main">
             Got it, please confirm your number
           </h2>
