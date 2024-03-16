@@ -106,6 +106,7 @@ const WelcomeScreen: React.FC = () => {
           name: customerName,
           bio: customerBio,
           imageUrl: imageUrl,
+          unread: '0',
           timeStamp: newTimestamp,
         });
         const uniqueId = documentRef.id;

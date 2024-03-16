@@ -173,8 +173,10 @@ const ChatScreen = () => {
               ? myConnection.map((user) => (
                   <div key={user.id} className="chat-user-item" onClick={() => handleChangeScreen(user.customerId)}>
                     <div style={{ width: "15%" }}>
+                    <div className="image-container">
                       <CircularImage imageUrl={user.imageUrl} alt={user.name} />
                       <div className={`status-dot-chat ${user.status === "active" ? "green" : "red"}`}></div>
+                    </div>
                     </div>
                     <div className="user-details-container">
                       <div className="user-details-row">
@@ -183,7 +185,7 @@ const ChatScreen = () => {
                       </div>
                       <div className="user-details-row">
                         <p className="user-last-message">{lastMessages[user.customerId]}</p>
-                        {user.unread != 0 ? (
+                        {user.unread != 0? (
                           <div className="green-circle">
                             <p className="unread-number-of-messages">{user.unread}</p>
                           </div>

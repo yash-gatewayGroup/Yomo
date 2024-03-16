@@ -435,8 +435,14 @@ const MessageScreen: React.FC<verificationParams> = () => {
           </DialogActions>
         </Dialog>
         <div className="header-message-screen">
-          <CircularImage imageUrl={userData?.imageUrl} alt={userData?.name} style={{ height: "100%", width: "13%" }} />
-          <div className={`status-dot-message ${userData?.status === "active" ? "green" : "red"}`}></div>
+          <div className="image-container">
+            <CircularImage
+              imageUrl={userData?.imageUrl}
+              alt={userData?.name}
+              style={{ height: "90%", width: "90%", justifyContent: "center", alignItems: "center", display:"flex" }}
+            />
+            <div className={`status-dot-message ${userData?.status === "active" ? "green" : "red"}`}></div>
+          </div>
           <div className="header-name-text">{userData?.name}</div>
         </div>
         <div className="message-icon">
