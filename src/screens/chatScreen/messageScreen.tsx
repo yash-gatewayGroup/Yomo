@@ -300,7 +300,7 @@ const MessageScreen: React.FC<verificationParams> = () => {
       message,
       from: user1,
       to: user2,
-      createdAt: newTimestamp,
+      createdAt: newTimestamp.seconds,
       media: imageUrl || "",
       unread: true,
     };
@@ -308,11 +308,11 @@ const MessageScreen: React.FC<verificationParams> = () => {
     await incrementUnreadMessageCount(user1);
 
     if (message && imageUrl) {
-      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: newTimestamp, media: imageUrl });
+      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: newTimestamp.seconds, media: imageUrl });
     } else if (imageUrl) {
-      await addDoc(collection(db, "messages", id, "chat"), { from: user1, to: user2, createdAt: newTimestamp, media: imageUrl });
+      await addDoc(collection(db, "messages", id, "chat"), { from: user1, to: user2, createdAt: newTimestamp.seconds, media: imageUrl });
     } else if (message) {
-      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: newTimestamp });
+      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: newTimestamp.seconds });
     } else {
       console.log("Kindly Enter some data");
     }
