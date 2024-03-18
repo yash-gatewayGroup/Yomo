@@ -301,7 +301,7 @@ const MessageScreen: React.FC<verificationParams> = () => {
       message,
       from: user1,
       to: user2,
-      createdAt: Math.floor(currentTime / 1000),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       media: imageUrl || "",
       unread: true,
     };
@@ -309,11 +309,11 @@ const MessageScreen: React.FC<verificationParams> = () => {
     await incrementUnreadMessageCount(user1);
 
     if (message && imageUrl) {
-      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: Math.floor(currentTime / 1000), media: imageUrl });
+      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: firebase.firestore.FieldValue.serverTimestamp(), media: imageUrl });
     } else if (imageUrl) {
-      await addDoc(collection(db, "messages", id, "chat"), { from: user1, to: user2, createdAt: Math.floor(currentTime / 1000), media: imageUrl });
+      await addDoc(collection(db, "messages", id, "chat"), { from: user1, to: user2, createdAt: firebase.firestore.FieldValue.serverTimestamp(), media: imageUrl });
     } else if (message) {
-      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: Math.floor(currentTime / 1000) });
+      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
     } else {
       console.log("Kindly Enter some data");
     }

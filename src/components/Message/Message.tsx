@@ -20,8 +20,7 @@ const Message: React.FC<MessageProps> = ({ msg, user1 }) => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [msg]);
 
-  const createdAtDate = new Date(msg.createdAt * 1000);
-
+  const createdAtDate = new Date(msg.createdAt * 1000);  
   const createdAtInIST = moment(createdAtDate).tz("Asia/Kolkata").format("h:mm A");
   const [showZoomedImage, setShowZoomedImage] = React.useState(false);
   const [clickedImageUrl, setClickedImageUrl] = React.useState<string | undefined>("");
