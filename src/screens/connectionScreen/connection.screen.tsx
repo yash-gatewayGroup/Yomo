@@ -11,6 +11,7 @@ import { Timestamp, collection, doc, documentId, onSnapshot, query, where } from
 import SearchIcon from "@mui/icons-material/Search";
 import Card from "../../components/Cards/Card";
 import RecievedCard from "../../components/Cards/RecievedCard";
+import { useNavigate } from "react-router-dom";
 
 interface FriendRequest {
   receiverId: string;
@@ -42,6 +43,7 @@ const ConnectionScreen = () => {
   const id: string | null = localStorage.getItem("databaseId");
   const [isSavingData, setIsSavingData] = useState<boolean>(false);
   const [value, setValue] = useState("received");
+  const navigate = useNavigate();
 
   // **********************************************************Common Function ******************************************************************//
 
@@ -99,7 +101,7 @@ const ConnectionScreen = () => {
   };
 
   // Delete Friend Request from 'friendRequests'
-  const deleteFriendRequest = async (friendRequestId: string) => {    
+  const deleteFriendRequest = async (friendRequestId: string) => {
     if (friendRequestId) await db.collection("friendRequests").doc(friendRequestId).delete();
   };
 
@@ -176,7 +178,7 @@ const ConnectionScreen = () => {
   //If the user clicks for 'Receive' Tab
   const Received = () => {
     //Function for Accepting the Friend Requests by the user
-    const accepted = async (senderId: string, friendRequestId: string) => {      
+    const accepted = async (senderId: string, friendRequestId: string) => {
       try {
         if (senderId && id) {
           setIsSavingData(true);
@@ -184,8 +186,8 @@ const ConnectionScreen = () => {
           await updateConnectionsInUser(senderId, id);
           await updatePendingIdsInUser(id, senderId);
           await updatePendingIdsInUser(senderId, id);
-          await updatetoAcceptIdsInUser(senderId,id)
-          await updatetoAcceptIdsInUser(id,senderId)
+          await updatetoAcceptIdsInUser(senderId, id);
+          await updatetoAcceptIdsInUser(id, senderId);
           await deleteFriendRequest(friendRequestId);
           setIsSavingData(false);
         } else {
@@ -430,8 +432,8 @@ const ConnectionScreen = () => {
       }
     };
 
-    const message = () => {
-      console.log("Message");
+    const message = (id: string) => {
+      navigate(`/message/${id}`);
     };
 
     // **********************************************************Connection Tab ******************************************************************//
@@ -467,7 +469,7 @@ const ConnectionScreen = () => {
               <RecievedCard
                 key={connection.id}
                 customer={connection}
-                accepted={message}
+                accepted={() => message(connection.customerId)}
                 rejected={rejected}
                 imageName="true"
                 isSaving={isSavingData}

@@ -309,11 +309,27 @@ const MessageScreen: React.FC<verificationParams> = () => {
     await incrementUnreadMessageCount(user1);
 
     if (message && imageUrl) {
-      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: firebase.firestore.FieldValue.serverTimestamp(), media: imageUrl });
+      await addDoc(collection(db, "messages", id, "chat"), {
+        message,
+        from: user1,
+        to: user2,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        media: imageUrl,
+      });
     } else if (imageUrl) {
-      await addDoc(collection(db, "messages", id, "chat"), { from: user1, to: user2, createdAt: firebase.firestore.FieldValue.serverTimestamp(), media: imageUrl });
+      await addDoc(collection(db, "messages", id, "chat"), {
+        from: user1,
+        to: user2,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        media: imageUrl,
+      });
     } else if (message) {
-      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      await addDoc(collection(db, "messages", id, "chat"), {
+        message,
+        from: user1,
+        to: user2,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
     } else {
       console.log("Kindly Enter some data");
     }
@@ -346,7 +362,14 @@ const MessageScreen: React.FC<verificationParams> = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="main-message-container">
         <div className="message-icon">
-          <IconButton onClick={goBack} style={{ color: "white" }} size="medium">
+          <IconButton
+            onClick={() => {
+              goBack();
+              resetUnreadMessageCount();
+            }}
+            style={{ color: "white" }}
+            size="medium"
+          >
             <ArrowBackIcon />
           </IconButton>
         </div>
@@ -438,7 +461,7 @@ const MessageScreen: React.FC<verificationParams> = () => {
         <div className="header-container-message">
           <div className="image-container-message">
             <CircularImage imageUrl={userData?.imageUrl} alt={userData?.name} style={{ height: "100%", width: "100%" }} />
-            <div className={`status-dot-message ${userData?.status === "active" ? "green" : "red"}`}></div>
+            <div className={`status-dot-message ${userData?.status === "online" ? "green" : "red"}`}></div>
           </div>
           <div className="header-name-text">{userData?.name}</div>
 

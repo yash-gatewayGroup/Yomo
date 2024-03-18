@@ -4,7 +4,7 @@ interface HeaderProps {
     activePage: number;
 }
 
-const TopPageNumber: React.FC<HeaderProps> = ({ activePage,  }) => {
+const TopPageNumber: React.FC<HeaderProps> = ({ activePage }) => {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff00',height:"30%" }}>
           {[1, 2, 3].map((pageNumber) => (

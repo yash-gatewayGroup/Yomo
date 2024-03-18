@@ -185,7 +185,7 @@ const ChatScreen = () => {
                   <div key={user.id} className="chat-user-item" onClick={() => handleChangeScreen(user.customerId)}>
                     <div className="image-container">
                       <CircularImage imageUrl={user.imageUrl} alt={user.name} />
-                      <div className={`statusdot ${user.status === "active" ? "green" : "red"}`}></div>
+                      <div className={`statusdot ${user.status === "online" ? "green" : "red"}`}></div>
                     </div>
                     <div className="user-details-container">
                       <div className="user-details-row">
@@ -209,7 +209,7 @@ const ChatScreen = () => {
                 <div key={user.id} className="chat-user-item" onClick={() => handleChangeScreen(user.customerId)}>
                   <div style={{ width: "15%" }}>
                     <CircularImage imageUrl={user.imageUrl} alt={user.name} />
-                    <div className={`status-dot-chat ${user.status === "active" ? "green" : "red"}`}></div>
+                    <div className={`status-dot-chat ${user.status === "online" ? "green" : "red"}`}></div>
                   </div>
                   <div className="user-details-container">
                     <div className="user-details-row">
