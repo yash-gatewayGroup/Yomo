@@ -47,7 +47,7 @@
   font-weight: 500px;
   max-lines: 1;
   margin: 0;
-  color: #ffffff;
+  color: var(--white-color);
   font-family: "Public Sans";
   font-size: 14px;
 }
@@ -144,12 +144,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #ffffff;
+  color: var(--white-color);
 }
 
 .main-message-container {
   height: 7%;
-  background-color: #000000;
+  background-color: var(--theme-color);
   display: flex;
 }
 
@@ -168,7 +168,7 @@
 }
 
 .box-text {
-  color: #000000;
+  color: var(--theme-color);
   font-family: "Public Sans";
   font-weight: 600;
   font-size: 14px;
@@ -191,7 +191,7 @@
 }
 
 .header-name-text {
-  color: #ffffff;
+  color: var(--white-color);
   padding-left: 10px;
   display: flex;
   font-size: 16px;

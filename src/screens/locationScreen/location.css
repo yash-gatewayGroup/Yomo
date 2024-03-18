@@ -39,7 +39,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #000000;
+  background-color: var(--theme-color);
 }
 
 .top-container {
@@ -77,7 +77,7 @@
 }
 
 .location-main-list-container {
-  background-color: #000000;
+  background-color: var(--theme-color);
   padding-bottom: 5%;
   padding-top: 8%;
   width: 100%;
@@ -99,7 +99,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  color: #ffffff;
+  color: var(--white-color);
   z-index: 2;
 }
 
@@ -128,7 +128,7 @@
 .card-name-text {
   margin: 0;
   font-size: 14px;
-  color: #ffffff;
+  color: var(--white-color);
   font-family: "Public-Sans";
   font-weight: bold;
 }
@@ -147,7 +147,7 @@
 .toast {
   font-size: medium;
   font-family: "Public Sans";
-  color: #000000;
+  color: var(--theme-color);
   font-weight: 500px;
 }
 
@@ -162,7 +162,7 @@
 
 .rounded-box {
   width: 60%;
-  background-color: #ffffff;
+  background-color: var(--white-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -176,15 +176,15 @@
 .static-btn-text {
   text-align: center;
   font-size: 14px;
-  color: #000000;
+  color: var(--theme-color);
 }
 
 .bottom-btn-container {
   position: fixed;
   bottom: 70px;
   padding: 10px 20px;
-  background-color: #ffffff;
-  color: #ffffff;
+  background-color: var(--white-color);
+  color: var(--white-color);
   border-radius: 20px;
   cursor: pointer;
   z-index: 1;
@@ -209,7 +209,7 @@
 .map-view {
   display: flex;
   align-items: center;
-  color: #000000;
+  color: var(--theme-color);
 }
 
 .map-text {
@@ -220,5 +220,5 @@
 .list-view {
     display: flex;
     align-items: center;
-    color: #000000;
+    color: var(--theme-color);
 }

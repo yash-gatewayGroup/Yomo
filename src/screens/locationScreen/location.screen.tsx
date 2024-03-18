@@ -3,7 +3,6 @@ import BottomNav from "../../components/BottomNav/BottomNavigation";
 import Header from "../../components/Header/Header";
 import ListIcon from "@mui/icons-material/List";
 import MapIcon from "@mui/icons-material/Map";
-import "./location.css";
 import BottomSheet from "../../components/BottomSheet/BottomSheet";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db, newTimestamp } from "../../firebase";

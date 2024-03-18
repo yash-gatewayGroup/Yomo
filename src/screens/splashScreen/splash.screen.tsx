@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./splash.style.css";
 import Logo from "../../assets/MainLogo.png";
 import { CircularProgress } from "@mui/material";
 

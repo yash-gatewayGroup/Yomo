@@ -8,7 +8,7 @@
 .withdraw-button {
   border: none;
   background-color: #1a1a1a;
-  color: #ffffff;
+  color: var(--white-color);
   font-weight: 700px;
   cursor: pointer;
   font-size: 12px;
@@ -27,7 +27,7 @@
 }
 
 .icon {
-  background-color: #FFFFFF;
+  background-color: var(--white-color);
   border-radius: 6px;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .icon-text {
-  color: #FFFFFF;
+  color: var(--white-color);
 }
 
 .css-ptiqhd-MuiSvgIcon-root {
