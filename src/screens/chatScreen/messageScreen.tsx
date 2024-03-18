@@ -294,13 +294,14 @@ const MessageScreen: React.FC<verificationParams> = () => {
     if (!hasMessageOrImage) {
       return;
     }
-    const newTimestamp = firebase.firestore.Timestamp.now();
+    const newTimestamp = firebase.firestore.FieldValue.serverTimestamp();
     const lastMsgDocRef = doc(db, "lastMsg", id);
+    const currentTime = Date.now();
     const lastMsgData = {
       message,
       from: user1,
       to: user2,
-      createdAt: newTimestamp.seconds,
+      createdAt: Math.floor(currentTime / 1000),
       media: imageUrl || "",
       unread: true,
     };
@@ -308,11 +309,11 @@ const MessageScreen: React.FC<verificationParams> = () => {
     await incrementUnreadMessageCount(user1);
 
     if (message && imageUrl) {
-      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: newTimestamp.seconds, media: imageUrl });
+      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: Math.floor(currentTime / 1000), media: imageUrl });
     } else if (imageUrl) {
-      await addDoc(collection(db, "messages", id, "chat"), { from: user1, to: user2, createdAt: newTimestamp.seconds, media: imageUrl });
+      await addDoc(collection(db, "messages", id, "chat"), { from: user1, to: user2, createdAt: Math.floor(currentTime / 1000), media: imageUrl });
     } else if (message) {
-      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: newTimestamp.seconds });
+      await addDoc(collection(db, "messages", id, "chat"), { message, from: user1, to: user2, createdAt: Math.floor(currentTime / 1000) });
     } else {
       console.log("Kindly Enter some data");
     }
