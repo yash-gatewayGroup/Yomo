@@ -6,7 +6,7 @@
   padding-inline-end: px;
   padding-top: 16px;
   padding-bottom: 16px; */
-  padding: 16px;
+  padding: 10px;
 }
 
 .chat-user-item {
@@ -32,9 +32,8 @@
 }
 
 .user-details-container {
-  width: 85%;
-  flex-direction: row;
-  height: 90%;
+  width: 100%;
+  padding: 7px;
 }
 
 .user-details-row {
@@ -51,6 +50,36 @@
   color: #ffffff;
   font-family: "Public Sans";
   font-size: 14px;
+}
+
+.image-container-message {
+  position: relative;
+  border-radius: 60%;
+  width: 10%;
+  height: 60%;
+}
+
+.header-container-message {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.status-dot-message {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.green {
+  background-color: green;
+}
+
+.red {
+  background-color: red;
 }
 
 .user-last-message {
@@ -81,24 +110,6 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-}
-
-.status-dot-message {
-  position: absolute;
-  top: 78%;
-  left: 78%;
-  transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.status-dot-message.green {
-  background-color: green;
-}
-
-.status-dot-message.red {
-  background-color: red;
 }
 
 .green-circle {
@@ -183,20 +194,21 @@
   color: #ffffff;
   padding-left: 10px;
   display: flex;
-  font-size: 18px;
-  font-family: 'Public Sanse';
+  font-size: 16px;
+  font-family: "Public Sanse";
   font-weight: bold;
   align-items: flex-end;
+  width: 80%;
 }
 
 .chat-loader-style {
-  display: flex; 
+  display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-.add-attachment{
-  display: flex; 
+.add-attachment {
+  display: flex;
   justify-content: center;
 }

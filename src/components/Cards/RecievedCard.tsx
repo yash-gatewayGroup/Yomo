@@ -69,7 +69,7 @@ const RecievedCard: React.FC<Props> = ({ customer, accepted, rejected, imageName
           <div onClick={handleAccepted}>
             {!imageName ? <DoneOutlinedIcon className="icon" fontSize="small" /> : <TextsmsIcon className="icon-text" fontSize="small" />}
           </div>
-          <div className="close-icon" onClick={handleRejected}>
+          <div onClick={handleRejected}>
             {!imageName ? <CloseOutlinedIcon className="icon" fontSize="small" /> : <BlockIcon className="icon-text" fontSize="small" />}
           </div>
         </div>

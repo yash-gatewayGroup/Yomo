@@ -6,7 +6,7 @@
 .connection-user-item {
   display: flex;
   align-items: center;
-  padding: 12px;
+  padding: 8px;
 }
 
 .profile-pic-container {
@@ -22,7 +22,7 @@
 }
 
 .userdetails {
-  width: 80%;
+  width: 75%;
   padding-inline-start: 3%;
   font-weight: 400;
   color: #ffffff;

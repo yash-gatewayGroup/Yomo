@@ -434,21 +434,18 @@ const MessageScreen: React.FC<verificationParams> = () => {
             />
           </DialogActions>
         </Dialog>
-        <div className="header-message-screen">
-          <div className="image-container">
-            <CircularImage
-              imageUrl={userData?.imageUrl}
-              alt={userData?.name}
-              style={{ height: "90%", width: "90%", justifyContent: "center", alignItems: "center", display:"flex" }}
-            />
+        <div className="header-container-message">
+          <div className="image-container-message">
+            <CircularImage imageUrl={userData?.imageUrl} alt={userData?.name} style={{ height: "100%", width: "100%" }} />
             <div className={`status-dot-message ${userData?.status === "active" ? "green" : "red"}`}></div>
           </div>
           <div className="header-name-text">{userData?.name}</div>
-        </div>
-        <div className="message-icon">
-          <IconButton aria-label="delete" onClick={handleClick}>
-            <MoreVertIcon fontSize="medium" style={{ color: "#ffffff" }} />
-          </IconButton>
+
+          <div className="message-icon">
+            <IconButton aria-label="delete" onClick={handleClick}>
+              <MoreVertIcon fontSize="medium" style={{ color: "#ffffff" }} />
+            </IconButton>
+          </div>
         </div>
       </div>
       <div className="chat-container">{userMessages.length ? userMessages.map((msg, i) => <Message key={i} msg={msg} user1={userId} />) : null}</div>

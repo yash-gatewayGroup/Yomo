@@ -1,35 +1,8 @@
 
-.connection-user-item {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-}
-
 .image-container {
   position: relative;
-  width: 45px;
-  height: 45px;
+  width: 13%;
   border-radius: 60%;
-}
-
-.userdetails {
-  width: 80%;
-  padding-inline-start: 3%;
-  font-weight: 400;
-  color: #ffffff;
-  font-size: 14px;
-  font-family: "Public Sans";
-  max-lines: 1;
-}
-
-.statusdot {
-  position: absolute;
-  top: 95%;
-  left: 90%;
-  transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
 }
 
 .withdraw-button {
@@ -46,7 +19,7 @@
 }
 
 .btn-container {
-  width:16%;
+  width:12%;
   flex-direction: row;
   display: flex;
   justify-content: space-between;

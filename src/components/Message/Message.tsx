@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import moment from "moment-timezone";
 import avatarImageSrc from "../../assets/avatar.png";
+import ZoomableImage from "../ZoomableImage/ZoomableImage";
 
 interface MessageProps {
   msg: {
@@ -22,9 +23,22 @@ const Message: React.FC<MessageProps> = ({ msg, user1 }) => {
   const createdAtDate = new Date(msg.createdAt.seconds * 1000 + msg.createdAt.nanoseconds / 1000000);
 
   const createdAtInIST = moment(createdAtDate).tz("Asia/Kolkata").format("h:mm A");
+  const [showZoomedImage, setShowZoomedImage] = React.useState(false);
+  const [clickedImageUrl, setClickedImageUrl] = React.useState<string | undefined>("");
+
+  const handleClick = (imageUrl: string) => {
+    setClickedImageUrl(imageUrl);
+    setShowZoomedImage(true);
+  };
+
+  const handleClose = () => {
+    setShowZoomedImage(false);
+    setClickedImageUrl("");
+  };
 
   return (
     <div className={`message_wrapper ${msg.from === user1 ? "own" : ""}`} ref={scrollRef}>
+      {clickedImageUrl && <ZoomableImage imageUrl={clickedImageUrl} onClose={handleClose} />}
       <div style={{ flexDirection: "column", display: "flex", justifyContent: "flex-end", paddingInlineEnd: "5%" }}>
         {msg.from === user1 ? (
           <small style={{ alignSelf: msg.from === user1 ? "flex-end" : "flex-start", color: "#999999", fontSize: 12, fontFamily: "Public Sans" }}>
@@ -41,14 +55,13 @@ const Message: React.FC<MessageProps> = ({ msg, user1 }) => {
                 fontSize: 12,
                 fontFamily: "Public Sans",
                 marginTop: "10px",
-                paddingInlineStart:"8px"
+                paddingInlineStart: "8px",
               }}
             >
               {createdAtInIST}
             </small>
           </div>
         )}
-
         {msg.media && msg.message ? (
           <p className={msg.from === user1 ? "me" : "friend"}>
             <div style={{ justifyContent: msg.from === user1 ? "flex-end" : "flex-start", display: "flex" }}>
@@ -57,6 +70,7 @@ const Message: React.FC<MessageProps> = ({ msg, user1 }) => {
                   src={msg.media}
                   alt={msg.message}
                   style={{ height: "50%", width: "80%", alignSelf: msg.from === user1 ? "flex-end" : "flex-start" }}
+                  onClick={() => handleClick(msg.media ?? "")}
                 />
               )}
             </div>
@@ -64,7 +78,7 @@ const Message: React.FC<MessageProps> = ({ msg, user1 }) => {
             <br />
           </p>
         ) : msg.media ? (
-          <div style={{ width: "60%", alignSelf: msg.from === user1 ? "flex-end" : "", paddingLeft: msg.from != user1 ? '40px': '0px' }}>
+          <div style={{ width: "60%", alignSelf: msg.from === user1 ? "flex-end" : "", paddingLeft: msg.from != user1 ? "40px" : "0px" }}>
             <img
               src={msg.media}
               alt={msg.message}
@@ -75,6 +89,7 @@ const Message: React.FC<MessageProps> = ({ msg, user1 }) => {
                 aspectRatio: "1 / 1",
                 borderRadius: "10px",
               }}
+              onClick={() => handleClick(msg.media ?? "")}
             />
           </div>
         ) : msg.message ? (

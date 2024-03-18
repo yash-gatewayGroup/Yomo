@@ -40,19 +40,30 @@ const ChatScreen = () => {
     if (doc.exists) {
       const data = doc.data();
       if (data) {
-        const messageTime = moment.unix(data.createdAt.seconds);
-        setLastMessages((prevLastMessages) => ({
-          ...prevLastMessages,
-          [user2]: data.message,
-        }));
-
-        setTimeAgo((prevLastMessages) => ({
-          ...prevLastMessages,
-          [user2]: messageTime.fromNow(),
-        }));
+        if (data.message !== undefined) {
+          const messageTime = moment.unix(data.createdAt.seconds);
+          setLastMessages((prevLastMessages) => ({
+            ...prevLastMessages,
+            [user2]: data.message,
+          }));
+          setTimeAgo((prevLastMessages) => ({
+            ...prevLastMessages,
+            [user2]: messageTime.fromNow(),
+          }));
+        } else {
+          const messageTime = moment.unix(data.createdAt.seconds);
+          setLastMessages((prevLastMessages) => ({
+            ...prevLastMessages,
+            [user2]: "Media",
+          }));
+          setTimeAgo((prevLastMessages) => ({
+            ...prevLastMessages,
+            [user2]: messageTime.fromNow(),
+          }));
+        }
+      } else {
+        console.log("No such document!");
       }
-    } else {
-      console.log("No such document!");
     }
   };
 
@@ -172,11 +183,9 @@ const ChatScreen = () => {
             {!searchOpen
               ? myConnection.map((user) => (
                   <div key={user.id} className="chat-user-item" onClick={() => handleChangeScreen(user.customerId)}>
-                    <div style={{ width: "15%" }}>
                     <div className="image-container">
                       <CircularImage imageUrl={user.imageUrl} alt={user.name} />
-                      <div className={`status-dot-chat ${user.status === "active" ? "green" : "red"}`}></div>
-                    </div>
+                      <div className={`statusdot ${user.status === "active" ? "green" : "red"}`}></div>
                     </div>
                     <div className="user-details-container">
                       <div className="user-details-row">
