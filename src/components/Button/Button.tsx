@@ -23,7 +23,7 @@ const LoginButtonComponent: React.FC<LoginButtonProps> = ({ onClick, disable, na
         backgroundColor: disable ? "#808080" : colors.white,
         color: disable ? colors.white : colors.theme_color,
         fontFamily: "Public Sans",
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: "bold",
         borderRadius: "5px",
         alignItems: "center",
@@ -32,7 +32,7 @@ const LoginButtonComponent: React.FC<LoginButtonProps> = ({ onClick, disable, na
         ...style,
       }}
     >
-      {isSaving ? <CircularProgress size={20} style={{ justifyContent: "center", alignContent: "center" }} /> : null}
+      {isSaving ? <CircularProgress size={25} style={{ justifyContent: "center", alignContent: "center", color:"#000000" }}  /> : null}
       {isSaving ? "" : name}
     </Button>
   );

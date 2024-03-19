@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../../assets/MainLogo.png";
 import { CircularProgress } from "@mui/material";
+import { strings } from "../../theme/string";
 
 const SplashScreen: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,7 @@ const SplashScreen: React.FC = () => {
   }, []);
 
   return (
-    <div className="App">
+    <div className="splash-container">
       {loading ? (
         <div className="splash-screen">
           <img src={Logo} alt="" className="logo" />
@@ -32,9 +33,7 @@ const SplashScreen: React.FC = () => {
           <CircularProgress color="primary" size={50} />
         </div>
       )}
-      <div className="text-style">
-        Copyright @ 2024. All Rights Reserved.
-      </div>
+      <div className="text-style">{strings.Copyright}</div>
     </div>
   );
 };

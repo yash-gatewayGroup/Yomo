@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const [userStatus, setUserStatus] = useState<string>("offline");
   // eslint-disable-next-line
   const token = localStorage.getItem("token");
-
+  const id = localStorage.getItem("databaseId");
   useEffect(() => {
     const updateUserStatus = () => {
       const userIsOnline = true;
@@ -53,7 +53,7 @@ const App: React.FC = () => {
         <Route path="/" element={<SplashScreen />} />
         <Route path="/login" element={token !== "null" ? <Login /> : <DashboardScreen />} />
         <Route path="/otpscreen/:phoneNumber" element={token !== "null" ? <Otpscreen /> : <DashboardScreen />} />
-        <Route path="/welcome" element={<WelcomeScreen />} />
+        <Route path="/welcome" element={id ? <WelcomeScreen /> : token !== "null" ? <Login /> : <WelcomeScreen />} />
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/connection" element={<ConnectionScreen />} />
         <Route path="/chats" element={<ChatScreen />} />

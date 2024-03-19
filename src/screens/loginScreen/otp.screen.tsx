@@ -156,17 +156,23 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
     }
   };
 
+  const handlePaste: React.ClipboardEventHandler = (event) => {
+    const data = event.clipboardData.getData("text");
+    setOtp(data);
+    console.log(data);
+  };
+
   return (
     <>
       <div id="recaptcha-container"></div>
-      <Header showLogo={true} showBackButton={true} />
+      <div style={{ height: "6%" }}>
+        <Header showLogo={true} showBackButton={true} />
+      </div>
       <Toaster position="bottom-center" reverseOrder={false} />
 
       <div className="main-otp-container">
         <div className="otp-text-container">
-          <h2 className="text-style-main">
-            Got it, please confirm your number
-          </h2>
+          <h2 className="text-style-main">Got it, please confirm your number</h2>
           <h5 className="small-text-style">
             We've sent a 6-digit code to your Mobile No. Please <br />
             enter the code in the box below to verify your number
@@ -179,7 +185,8 @@ const Otpscreen: React.FC<OtpVerificationParams> = () => {
             numInputs={6}
             shouldAutoFocus={true}
             renderSeparator={<span>-</span>}
-            renderInput={(props) => <input {...props} />}
+            onPaste={handlePaste}
+            renderInput={(props) => <input {...props} inputMode="numeric" />}
             inputStyle={{
               height: "100%",
               width: "100%",

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import TextBoxComponent from "../../components/TextBox/TextBox";
 import LoginButtonComponent from "../../components/Button/Button";
 import { useNavigate } from "react-router-dom";
-import "./style.css";
 import logo from "../../assets/MainLogo.png";
 import firebase from "firebase/compat/app";
 import toast, { Toaster } from "react-hot-toast";
 import { colors } from "../../theme/colors";
+import { strings } from "../../theme/string";
 
 const Login: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -34,7 +34,7 @@ const Login: React.FC = () => {
     };
     verifyToken();
   }, []);
-  
+  firebase.auth().settings.appVerificationDisabledForTesting = true;
   // Sent OTP
   const signin = () => {
     setIsLoading(true);
@@ -82,18 +82,10 @@ const Login: React.FC = () => {
   return (
     <div className="main">
       <Toaster position="bottom-center" reverseOrder={false} />
-      <div className="login-image-container">
-        <div className="img-container">
-          <img
-            src={logo}
-            style={{
-              width: "30%",
-            }}
-            alt="Logo"
-          />
-        </div>
-        <div className="text-container">Branding</div>
+      <div className="img-container">
+        <img src={logo} className="logo-image-width" alt="logo" />
       </div>
+      <div className="text-container">{strings.Branding}</div>
       <div id="recaptcha-container"></div>
 
       <div className="otp-container">
@@ -109,16 +101,14 @@ const Login: React.FC = () => {
             width: "90%",
             fontSize: 16,
           }}
-          placeholder={"+91 xxxx xxxx xx"}
+          placeholder={strings.NumberFormat}
         />
-        <div className="buttonContainer">
-          <LoginButtonComponent variant="contained" onClick={signin} name="Login" isSaving={isLoading} />
-        </div>
+        <LoginButtonComponent variant="contained" onClick={signin} name="Login" isSaving={isLoading} />
       </div>
       <div className="footer">
-        Privacy Policy, Terms & Conditions
+        {strings.PrivacyPolicy}
         <br />
-        Copyright @ 2024 All Rights Reserved
+        {strings.Copyright}
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import "./style.css";
+import React, { useState } from "react";
 import TextBoxComponent from "../../components/TextBox/TextBox";
 import LoginButtonComponent from "../../components/Button/Button";
 import { db, storage, newTimestamp } from "../../firebase";
@@ -50,26 +49,6 @@ const WelcomeScreen: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const checkDocumentId = async () => {
-      const changeId = localStorage.getItem("databaseId");
-      if (changeId) {
-        try {
-          const docSnapshot = await db.collection("users").doc(changeId).get();
-          const userData = docSnapshot.data();
-          if (userData && userData.documentId) {
-            window.location.replace("/dashboard");
-          }
-        } catch (error) {
-          console.error("Error fetching document:", error);
-        }
-      } else {
-        console.log("changeId is not defined or null");
-      }
-    };
-    checkDocumentId();
-  }, []);
-
   const addDocumentId = async (documentId: string) => {
     const changeId: string | undefined = localStorage.getItem("userCollectionId") || undefined;
     await db.collection("users").doc(changeId).set(
@@ -94,7 +73,6 @@ const WelcomeScreen: React.FC = () => {
       try {
         const storageRef = storage.ref(`images/${image.name}`);
         const uploadTask = storageRef.put(image);
-
         uploadTask.on("state_changed", (snapshot: any) => {
           console.log("snapshot", snapshot);
         });
@@ -106,7 +84,7 @@ const WelcomeScreen: React.FC = () => {
           name: customerName,
           bio: customerBio,
           imageUrl: imageUrl,
-          unread: '0',
+          unread: "0",
           timeStamp: newTimestamp,
         });
         const uniqueId = documentRef.id;
@@ -139,102 +117,101 @@ const WelcomeScreen: React.FC = () => {
   };
 
   return (
-    <>
-      <Header showLogo={true} showBackButton={true} />
-      <div className="welcome-container">
-        <div className="detail-text">Add Your details</div>
-        <div className="image-upload-section">
-          {!imageUrl ? (
-            <label className="main-label">
-              <div className="dot-circle" />
-              <input
-                type="file"
-                accept="image/*"
-                className="input-style"
-                onChange={(e: any) => {
-                  handleImageChange(e.target.files);
-                }}
-              />
-              <div className="circular-image-select">
-                <PhotoCameraRoundedIcon style={{ color: "FFFFFF" }} />
-                <div className="overlay-text">Upload photo</div>
-              </div>
-              <div className="selection-text">
-                Allowed *.jpeg, *.jpg, *.png, *.gif <br></br> Max size of 3.1 MB
-              </div>
-            </label>
-          ) : imageLoading ? (
-            <div className="circular-progress-style">
-              <CircularProgress />
-            </div>
-          ) : (
-            <label className="main-label">
-              <div className="dot-circle">
-                <img
-                  src={imageUrl}
-                  alt="selected-profile-pic"
-                  style={{
-                    position: "absolute",
-                    borderRadius: "50%",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                />
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                className="input-style"
-                onChange={(e: any) => {
-                  handleImageChange(e.target.files);
-                }}
-              />
-              <div className="edit-button">
-                <ModeEditRoundedIcon style={{ color: "FFFFFF" }} />
-              </div>
-            </label>
-          )}
-          <Toaster position="bottom-center" reverseOrder={false} />
-        </div>
-
-        <div className="form-section">
-          <TextBoxComponent
-            value={customerName}
-            onChange={(value) => customerNameWords(value)}
-            label="Full Name"
-            variant="outlined"
-            fullWidth
-            color="white"
-            style={{
-              borderRadius: "8px",
-              width: "90%",
-              fontSize: 14,
-            }}
-            placeholder={"Your Name Here"}
-          />
-
-          <TextBoxComponent
-            value={customerBio}
-            onChange={(value) => customerBioWords(value)}
-            label="Bio"
-            variant="outlined"
-            fullWidth
-            color="white"
-            style={{
-              borderRadius: "8px",
-              width: "90%",
-              fontSize: 14,
-              maxLines: 3,
-              paddingBottom: "30px",
-            }}
-            placeholder={"Describe yourself in few Words"}
-            multiline={true}
-            rows={3}
-          />
-          <LoginButtonComponent variant="contained" onClick={handleUpload} name="Save" isSaving={loading} />
-        </div>
+    <div style={{ height: "100%", backgroundColor: "#000000" }}>
+      <div style={{ height: "6%" }}>
+        <Header showLogo={true} showBackButton={true} />
       </div>
-    </>
+      <div className="detail-text">Add Your details</div>
+      <div className="image-upload-section">
+        {!imageUrl ? (
+          <label className="main-label">
+            <div className="dot-circle" />
+            <input
+              type="file"
+              accept="image/*"
+              className="input-style"
+              onChange={(e: any) => {
+                handleImageChange(e.target.files);
+              }}
+            />
+            <div className="circular-image-select">
+              <PhotoCameraRoundedIcon style={{ color: "FFFFFF" }} />
+              <div className="overlay-text">Upload photo</div>
+            </div>
+            <div className="selection-text">
+              Allowed *.jpeg, *.jpg, *.png, *.gif <br></br> Max size of 3.1 MB
+            </div>
+          </label>
+        ) : imageLoading ? (
+          <div className="circular-progress-style">
+            <CircularProgress />
+          </div>
+        ) : (
+          <label className="main-label">
+            <div className="dot-circle">
+              <img
+                src={imageUrl}
+                alt="selected-profile-pic"
+                style={{
+                  position: "absolute",
+                  borderRadius: "50%",
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              className="input-style"
+              onChange={(e: any) => {
+                handleImageChange(e.target.files);
+              }}
+            />
+            <div className="edit-button">
+              <ModeEditRoundedIcon style={{ color: "FFFFFF" }} />
+            </div>
+          </label>
+        )}
+        <Toaster position="bottom-center" reverseOrder={false} />
+      </div>
+
+      <div className="form-section">
+        <TextBoxComponent
+          value={customerName}
+          onChange={(value) => customerNameWords(value)}
+          label="Full Name"
+          variant="outlined"
+          fullWidth
+          color="white"
+          style={{
+            borderRadius: "8px",
+            width: "90%",
+            fontSize: 14,
+          }}
+          placeholder={"Your Name Here"}
+        />
+
+        <TextBoxComponent
+          value={customerBio}
+          onChange={(value) => customerBioWords(value)}
+          label="Bio"
+          variant="outlined"
+          fullWidth
+          color="white"
+          style={{
+            borderRadius: "8px",
+            width: "90%",
+            fontSize: 14,
+            maxLines: 3,
+          }}
+          placeholder={"Describe yourself in few Words"}
+          multiline={true}
+          rows={3}
+        />
+        <LoginButtonComponent variant="contained" onClick={handleUpload} name="Save" isSaving={loading} />
+      </div>
+    </div>
   );
 };
 export default WelcomeScreen;

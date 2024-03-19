@@ -11,6 +11,7 @@ import { MarkerClusterer } from "@react-google-maps/api";
 import CustomMarker from "./Custommarker";
 import { CircularProgress } from "@mui/material";
 import "./location.css";
+import "../../App.css"
 import { SquareImage } from "../../components/SquareImage/SquareImage";
 import circleImage from "../../assets/circle.png";
 import { colors } from "../../theme/colors";
