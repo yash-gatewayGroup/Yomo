@@ -29,6 +29,7 @@ const ChatScreen = () => {
   const [timeAgo, setTimeAgo] = React.useState<{ [key: string]: string }>({});
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [filteredData, setFilteredData] = React.useState<CustomerData[]>([]);
+  const [searchValue, setSearchValue] = React.useState<string>("");
   const navigate = useNavigate();
 
   // Fetching the last message of the connections
@@ -139,8 +140,15 @@ const ChatScreen = () => {
   //Getting the value from the searchbar
   const handleInputChange = (e: any) => {
     const { value } = e.target;
-    const filtered = myConnection.filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
-    setFilteredData(filtered);
+    if (e.key === "Enter") {
+      setSearchValue(value);
+      const filtered = myConnection.filter((item) => item.name.toLowerCase().includes(searchValue.toLowerCase()));
+      setFilteredData(filtered);
+    } else {
+      setSearchValue(value);
+      const filtered = myConnection.filter((item) => item.name.toLowerCase().includes(searchValue.toLowerCase()));
+      setFilteredData(filtered);
+    }
   };
 
   //if user selects the chat option
@@ -149,34 +157,40 @@ const ChatScreen = () => {
   };
 
   return (
-    <>
+    <div style={{ height: "100%" }}>
       {searchOpen ? (
-        <div className="search-bar-container">
-          <Paper
-            component="form"
-            sx={{ display: "flex", alignItems: "center", width: "90%", height: "70%", borderRadius: "25px" }}
-            className="search-bar-paper"
-          >
-            <IconButton sx={{ color: "#000000" }} aria-label="menu" onClick={handleSearchClose}>
-              <KeyboardBackspaceIcon />
-            </IconButton>
-            <InputBase
-              sx={{ ml: 1, flex: 1 }}
-              placeholder="Search by name"
-              inputProps={{ "aria-label": "search google maps" }}
-              onChange={handleInputChange}
-            />
-          </Paper>
+        <div className="header-container">
+          <div className="search-bar-container">
+            <Paper
+              component="form"
+              sx={{ display: "flex", alignItems: "center", width: "90%", height: "70%", borderRadius: "25px" }}
+              className="search-bar-paper"
+            >
+              <IconButton sx={{ color: "#000000" }} aria-label="menu" onClick={handleSearchClose}>
+                <KeyboardBackspaceIcon />
+              </IconButton>
+              <InputBase sx={{ ml: 1, flex: 1 }} onKeyDown={handleInputChange} placeholder="Search by name" onChange={handleInputChange} />
+            </Paper>
+          </div>
         </div>
-      ) : (
+      ) : myConnection.length > 8 ? (
         <div className="header-container">
           <Header headerName="Chats" showOptionButton={true} iconName={<SearchIcon />} onOptionClick={searchClick} />
         </div>
+      ) : (
+        <div className="header-container">
+          <Header headerName="Chats" />
+        </div>
       )}
+
       <div className="main-chat-container">
         {isLoading ? (
           <div className="chat-loader-style">
             <CircularProgress style={{ color: "#ffffff" }} />
+          </div>
+        ) : myConnection.length === 0 ? (
+          <div className="no-data-text">
+            <div className="no-chat-text">No chats found, Kindly start chatting with the peoples around you</div>
           </div>
         ) : (
           <div className="chat-user-list">
@@ -187,19 +201,33 @@ const ChatScreen = () => {
                       <CircularImage imageUrl={user.imageUrl} alt={user.name} />
                       <div className={`statusdot ${user.status === "online" ? "green" : "red"}`}></div>
                     </div>
-                    <div className="user-details-container">
+                    {lastMessages[user.customerId] != null ? (
                       <div className="user-details-row">
                         <p className="user-name">{user.name}</p>
                         <p className="minutes-ago">{timeAgo[user.customerId]}</p>
                       </div>
-                      <div className="user-details-row">
-                        <p className="user-last-message">{lastMessages[user.customerId]}</p>
-                        {user.unread != 0? (
-                          <div className="green-circle">
-                            <p className="unread-number-of-messages">{user.unread}</p>
-                          </div>
-                        ) : null}
+                    ) : (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          color: "#ffffff",
+                          fontFamily: "Public Sans",
+                          fontSize: "14px",
+                          fontWeight: "400",
+                          paddingInlineStart: "12px",
+                        }}
+                      >
+                        {user.name}
                       </div>
+                    )}
+                    <div className="user-details-row">
+                      <p className="user-last-message">{lastMessages[user.customerId]}</p>
+                      {user.unread != 0 ? (
+                        <div className="green-circle">
+                          <p className="unread-number-of-messages">{user.unread}</p>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 ))
@@ -227,30 +255,39 @@ const ChatScreen = () => {
                   </div>
                 </div>
               ))
+            ) : filteredData.length === 0 && searchValue ? (
+              <div className="no-data-text">
+                <div className="no-chat-text">No chats found for the name you have searched</div>
+              </div>
             ) : (
-              <div className="no-data-text">No data found</div>
+              <div className="no-data-text">
+                <div className="no-chat-text">Please enter the name in the searchbox whom you want to search</div>
+              </div>
             )}
 
-            <Fab
-              size="medium"
-              aria-label="add"
-              style={{
-                position: "fixed",
-                bottom: "9vh",
-                right: "2vh",
-                backgroundColor: "#ffffff",
-                color: "#000000",
-              }}
-            >
-              <AddIcon />
-            </Fab>
+            {myConnection.length > 8 && (
+              <Fab
+                size="medium"
+                aria-label="add"
+                style={{
+                  position: "fixed",
+                  bottom: "10%",
+                  right: "2vh",
+                  backgroundColor: "#ffffff",
+                  color: "#000000",
+                }}
+              >
+                <AddIcon />
+              </Fab>
+            )}
           </div>
         )}
       </div>
+
       <div className="bottom-nav-container">
         <BottomNav screenValue="chats" />
       </div>
-    </>
+    </div>
   );
 };
 

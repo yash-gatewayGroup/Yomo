@@ -15,21 +15,8 @@ interface TextBoxProps {
   rows?: number;
 }
 
-const TextBoxComponent: React.FC<TextBoxProps> = ({
-  label,
-  variant,
-  fullWidth,
-  value,
-  onChange,
-  color,
-  style,
-  placeholder,
-  multiline,
-  rows,
-}) => {
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+const TextBoxComponent: React.FC<TextBoxProps> = ({ label, variant, fullWidth, value, onChange, color, style, placeholder, multiline, rows }) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onChange(e.target.value);
   };
   const classes = useStyles();
@@ -59,31 +46,31 @@ export default TextBoxComponent;
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex',
-    justifyContent: 'center',
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#3A3A3A',
-        borderWidth: '1px'
+    display: "flex",
+    justifyContent: "center",
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "#3A3A3A",
+        borderWidth: "1px",
       },
-      '&:hover fieldset': {
-        borderColor: '#3A3A3A',
+      "&:hover fieldset": {
+        borderColor: "#3A3A3A",
       },
-      '&.Mui-focused fieldset': {
-        borderColor: '#3A3A3A',
-      },
-    },
-    '& .MuiInputLabel-root': {
-      color: '#FFFFFF', // Set label color to white
-      '&.Mui-focused': {
-        color: '#FFFFFF', // Set label color to white on focus
+      "&.Mui-focused fieldset": {
+        borderColor: "#3A3A3A",
       },
     },
-    '& .MuiInputBase-root': {
-      color: '#FFFFFF',
+    "& .MuiInputLabel-root": {
+      color: "#FFFFFF", // Set label color to white
+      "&.Mui-focused": {
+        color: "#FFFFFF", // Set label color to white on focus
+      },
     },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#3A3A3A',
+    "& .MuiInputBase-root": {
+      color: "#FFFFFF",
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#3A3A3A",
     },
   },
 });

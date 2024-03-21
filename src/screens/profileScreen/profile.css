@@ -8,25 +8,23 @@
 }
 
 .details {
-  width: 100%;
   margin: 0;
   height: auto;
   padding-inline-start: 10px;
-  width: 74%;
+  width: 75%;
 }
 
 .iconforward {
-  width: 8vh;
+  width: 12%;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  height: 87%;
+  height: 88%;
   background-color: var(--theme-color);
 }
 
@@ -51,7 +49,7 @@
 .help {
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 8px;
 }
 
 .account-settings p,
@@ -66,6 +64,7 @@
 .block-icon,
 .help-icon {
   padding: 10px;
+  width: 10%;
 }
 
 .loading-indicator {

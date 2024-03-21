@@ -487,7 +487,7 @@ const ConnectionScreen = () => {
         <div style={{ height: "7%" }}>
           <Header headerName="Matches" showOptionButton={true} iconName={<SearchIcon />} onOptionClick={searchClick} />
         </div>
-        <div style={{ height: "86%" }}>
+        <div style={{ height: "87%", overflowY: "auto" }} className="custom-tabs">
           <TabContext value={value}>
             <TabList onChange={handleChange}>
               <Tab

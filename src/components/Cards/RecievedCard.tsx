@@ -4,7 +4,7 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { CircularImage } from "../CircleImage/circleImage";
 import "./CardStyle.css";
 // import TextsmsIcon from "@mui/icons-material/Textsms";
-import BlockIcon from "@mui/icons-material/Block";
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import TextsmsIcon from "@mui/icons-material/ChatBubble";
 import { CircularProgress } from "@mui/material";
 interface Customer {
@@ -70,7 +70,7 @@ const RecievedCard: React.FC<Props> = ({ customer, accepted, rejected, imageName
             {!imageName ? <DoneOutlinedIcon className="icon" fontSize="small" /> : <TextsmsIcon className="icon-text" fontSize="small" />}
           </div>
           <div onClick={handleRejected}>
-            {!imageName ? <CloseOutlinedIcon className="icon" fontSize="small" /> : <BlockIcon className="icon-text" fontSize="small" />}
+            {!imageName ? <CloseOutlinedIcon className="icon" fontSize="small" /> : <BlockOutlinedIcon className="icon-text" fontSize="small" />}
           </div>
         </div>
       )}

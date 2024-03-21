@@ -61,14 +61,9 @@ const App: React.FC = () => {
         <Route path="/message/:connectionId" element={<MessageScreen />} />
         <Route path="/profileDetails" element={<ProfileDetail />} />
         <Route path="/blockeduser" element={<Blockeduser />} />
+        <Route path="/accountSettings" element={<AccountSettingScreen />} />
+        <Route path="/location" element={<LocationScreen />} />
       </Routes>
-      <div style={{ flexGrow: 1 }}>
-        <div style={{ height: "6%", backgroundColor: colors.theme_color }}></div>
-        <Routes>
-          <Route path="/accountSettings" element={<AccountSettingScreen />} />
-          <Route path="/location" element={<LocationScreen />} />
-        </Routes>
-      </div>
       {/* <BottomNav /> */}
     </Router>
   );

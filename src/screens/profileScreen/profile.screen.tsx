@@ -83,13 +83,7 @@ const ProfileScreen = () => {
                 {data.imageUrl ? (
                   <div
                     style={{
-                      height: "6vh",
-                      width: "6vh",
-                      objectFit: "cover",
-                      maxHeight: "10vh",
-                      maxWidth: "7vh",
-                      borderRadius: "50%",
-                      paddingInlineStart: "7px",
+                      width: "13%",
                     }}
                   >
                     <CircularImage imageUrl={data.imageUrl} alt={data.name} />
@@ -131,31 +125,31 @@ const ProfileScreen = () => {
                 <div className="settings-icon">
                   <SettingsIcon style={{ color: "#FFFFFF" }} />
                 </div>
-                <div style={{ flex: "1", textAlign: "left" }}>
+                <div style={{ flex: "1", textAlign: "left", width:"80%" }}>
                   <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: "Public Sans", color: "#FFFFFF" }}>Account settings</p>
                 </div>
-                <div>
+                <div style={{width:"10%", justifyContent:"center", alignItems:"center", display:"flex"}}>
                   <ArrowForwardIosIcon style={{ color: "#FFFFFF" }} />
                 </div>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", padding: 8 }} onClick={handleBlockAction}>
-                <div style={{ padding: 10 }}>
+                <div style={{ padding: 10, width:"10%", }}>
                   <BlockIcon style={{ color: "#FFFFFF" }} />
                 </div>
-                <div style={{ flex: "1", textAlign: "left" }}>
+                <div style={{ flex: "1", textAlign: "left", width:"80%" }}>
                   <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: "Public Sans", color: "#FFFFFF" }}>Blocked Users</p>
                 </div>
-                <div>
+                <div style={{width:"10%", justifyContent:"center", alignItems:"center", display:"flex"}}>
                   <ArrowForwardIosIcon style={{ color: "#FFFFFF" }} />
                 </div>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", padding: 8 }}>
-                <div style={{ padding: 10 }}>
+                <div style={{ padding: 10, width:"10%" }}>
                   <HelpOutlineIcon style={{ color: "#FFFFFF" }} />
                 </div>
-                <div style={{ flex: "1", textAlign: "left" }}>
+                <div style={{ flex: "1", textAlign: "left", width:"80%" }}>
                   <p style={{ fontSize: 14, margin: 0, fontWeight: "400", fontFamily: "Public Sans", color: "#FFFFFF" }}>Help</p>
                 </div>
               </div>

@@ -11,7 +11,7 @@ import { MarkerClusterer } from "@react-google-maps/api";
 import CustomMarker from "./Custommarker";
 import { CircularProgress } from "@mui/material";
 import "./location.css";
-import "../../App.css"
+import "../../App.css";
 import { SquareImage } from "../../components/SquareImage/SquareImage";
 import circleImage from "../../assets/circle.png";
 import { colors } from "../../theme/colors";
@@ -181,45 +181,44 @@ const LocationScreen = () => {
   const toggleView = () => {
     setIsMapView(!isMapView);
   };
-  
+
   const dataView = () => {
     return (
-      <div className="location-main-list-container">
-        <div className="list-container">
-          {nearbyLocations.length === 0 ? (
-            <div className="no-user-container">
-              <span className="no-user-text">
-                Quiet zone for now! <br></br>
-                No users found nearby
-              </span>
-            </div>
-          ) : (
-            nearbyLocations.map((profile, index) => (
-              <div
-                // style={{ width: "48%" }}
-                key={index}
-                className="location-image-container-list"
-                onClick={() => {
-                  if (profile.id) {
-                    // handleToggleBottomSheet();
-                    setBottomSheet(profile);
-                  }
-                }}
-              >
-                <SquareImage imageUrl={profile.imageUrl} alt={profile.name} />
-                <div className="card-container">
-                  <h2 className="card-name-text">{profile.name}</h2>
-                  <p className="card-bio-text">{profile.bio}</p>
-                </div>
+      <div className="list-container">
+        {nearbyLocations.length === 0 ? (
+          <div className="no-user-container">
+            <span className="no-user-text">
+              Quiet zone for now! <br></br>
+              No users found nearby. Try starting your location permission.
+            </span>
+          </div>
+        ) : (
+          nearbyLocations.map((profile, index) => (
+            <div
+              // style={{ width: "48%" }}
+              key={index}
+              className="location-image-container-list"
+              onClick={() => {
+                if (profile.id) {
+                  // handleToggleBottomSheet();
+                  setBottomSheet(profile);
+                }
+              }}
+            >
+              <SquareImage imageUrl={profile.imageUrl} alt={profile.name} />
+              <div className="card-container">
+                <h2 className="card-name-text">{profile.name}</h2>
+                <p className="card-bio-text">{profile.bio}</p>
               </div>
-            ))
-          )}
-        </div>
+            </div>
+          ))
+        )}
       </div>
     );
   };
 
-  const hasLongLat = (inlineUnit: Profiles): inlineUnit is Profiles & { latitude: number; longitude: number } => inlineUnit.latitude != null && inlineUnit.longitude != null;
+  const hasLongLat = (inlineUnit: Profiles): inlineUnit is Profiles & { latitude: number; longitude: number } =>
+    inlineUnit.latitude != null && inlineUnit.longitude != null;
 
   useEffect(() => {
     function mapFitBounds() {
@@ -515,8 +514,8 @@ const LocationScreen = () => {
           await updatePendingIdsInUser(id, receiverId);
           await findCollectionIdBySenderId(receiverId);
           setIsSaving(false);
-          handleToggleBottomSheet()
-          toast.success("Connection Accepted Sucessful, Kindly check connection screen")
+          handleToggleBottomSheet();
+          toast.success("Connection Accepted Sucessful, Kindly check connection screen");
         } else {
           await db
             .collection("friendRequests")
@@ -531,8 +530,8 @@ const LocationScreen = () => {
                 await createRequest(id, receiverId);
                 await createAcceptRequest(receiverId, id);
                 setIsSaving(false);
-                handleToggleBottomSheet()
-                toast.success("connection request sent sucessfully, kindly wait to be accepted")
+                handleToggleBottomSheet();
+                toast.success("connection request sent sucessfully, kindly wait to be accepted");
               }
             });
         }
@@ -544,10 +543,12 @@ const LocationScreen = () => {
   };
 
   return (
-    <>
-      <Header showLogo={true} />
+    <div style={{ backgroundColor: "#000000", height: "100%", overflowY: "auto" }}>
+      <div style={{ height: "8%" }}>
+        <Header showLogo={true} />
+      </div>
       <div className="toast">
-      <Toaster position="top-center" reverseOrder={false} />
+        <Toaster position="top-center" reverseOrder={false} />
       </div>
       {loading ? (
         <div className="loading-indicator">
@@ -555,31 +556,33 @@ const LocationScreen = () => {
         </div>
       ) : (
         <>
-          <div className="location-main-view">
-            <div className="rounded-box">
-              <span className="static-btn-text">Showing results within 10km area</span>
-            </div>
-          </div>
-          {isMapView ? dataView() : MapView()}
-
-          <div className="bottom-btn-container" onClick={toggleView}>
-            <div className="bottom-circular-btn">
-              <div className="bottom-btn-view">
-                {isMapView ? (
-                  <div className="map-view">
-                    <MapIcon />
-                    <span className="map-text">Map</span>
-                  </div>
-                ) : (
-                  <div className="list-view">
-                    <ListIcon />
-                    <span>List</span>
-                  </div>
-                )}
+          {nearbyLocations.length != 0 && (
+            <div className="location-main-view">
+              <div className="rounded-box">
+                <span className="static-btn-text">Showing results within 10km area</span>
               </div>
             </div>
-          </div>
-
+          )}
+          {isMapView ? dataView() : MapView()}
+          {nearbyLocations.length != 0 && (
+            <div className="bottom-btn-container" onClick={toggleView}>
+              <div className="bottom-circular-btn">
+                <div className="bottom-btn-view">
+                  {isMapView ? (
+                    <div className="map-view">
+                      <MapIcon />
+                      <span className="map-text">Map</span>
+                    </div>
+                  ) : (
+                    <div className="list-view">
+                      <ListIcon />
+                      <span>List</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           <BottomSheet
             id={bottomSheet?.id}
             name={bottomSheet?.name}
@@ -593,8 +596,10 @@ const LocationScreen = () => {
           />
         </>
       )}
-      <BottomNav screenValue="location" />
-    </>
+      <div style={{ height: "6%" }}>
+        <BottomNav screenValue="location" />
+      </div>
+    </div>
   );
 };
 

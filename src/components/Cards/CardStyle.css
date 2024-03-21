@@ -23,16 +23,12 @@
   flex-direction: row;
   display: flex;
   justify-content: space-between;
-  align-self: center;
+  padding-top: 2%;
 }
 
 .icon {
   background-color: var(--white-color);
   border-radius: 6px;
-}
-
-.close-icon .icon {
-  border-radius: 60%;
 }
 
 .icon-text {

@@ -24,16 +24,10 @@ const SplashScreen: React.FC = () => {
 
   return (
     <div className="splash-container">
-      {loading ? (
-        <div className="splash-screen">
-          <img src={Logo} alt="" className="logo" />
-        </div>
-      ) : (
-        <div className="splash-screen">
-          <CircularProgress color="primary" size={50} />
-        </div>
-      )}
-      <div className="text-style">{strings.Copyright}</div>
+      <div className="splash-content">
+        {loading ? <img src={Logo} alt="" className="splash-logo" /> : <CircularProgress color="primary" size={50} />}
+      </div>
+      <div className="copyright-text">{strings.Copyright}</div>
     </div>
   );
 };

@@ -7,6 +7,8 @@
   display: flex;
   align-items: center;
   padding: 8px;
+  justify-content: center;
+  align-items: center;
 }
 
 .profile-pic-container {
@@ -28,6 +30,8 @@
   color: var(--white-color);
   font-size: 14px;
   font-family: "Public Sans";
+  align-content: center;
+  display: flex;
 }
 
 .user-name {
@@ -104,4 +108,13 @@
 
 .MuiTabs-scroller {
   overflow-x: visible !important;
+}
+
+.custom-tabs {
+  position: fixed;
+  top: 10;
+  left: 0;
+  background-color: #000000; 
+  z-index: 999;
+  width: 100%;
 }
